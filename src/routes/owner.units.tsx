@@ -61,6 +61,11 @@ function Page() {
   const [rentDeposit, setRentDeposit] = useState<number>(0);
   const [rentPhoto, setRentPhoto] = useState<string>("");
   const [releaseUnit, setReleaseUnit] = useState<Unit | null>(null);
+  const [paymentPrompt, setPaymentPrompt] = useState<{
+    contractId: string;
+    tenantId?: string;
+    monthlyRent: number;
+  } | null>(null);
 
   const openRent = (u: Unit) => {
     setRentUnit(u);
@@ -76,7 +81,7 @@ function Page() {
     if (!rentUnit) return;
     if (!rentStart || !rentEnd) return toast.error("Inicio y fin son obligatorios");
     if (rentEnd <= rentStart) return toast.error("La fecha de fin debe ser posterior al inicio");
-    await markRented(rentUnit.id, {
+    const created = await markRented(rentUnit.id, {
       tenantId: rentTenant || undefined,
       startDate: rentStart,
       endDate: rentEnd,
@@ -86,6 +91,37 @@ function Page() {
     });
     toast.success("Unidad marcada como alquilada");
     setRentUnit(null);
+    if (created) {
+      setPaymentPrompt({
+        contractId: created.id,
+        tenantId: created.tenantId,
+        monthlyRent: created.monthlyRent,
+      });
+    }
+  };
+
+  const monthLabel = (d: Date) =>
+    d.toLocaleDateString("es-ES", { month: "long", year: "numeric" });
+
+  const generateCurrentPayment = async () => {
+    if (!paymentPrompt) return;
+    const now = new Date();
+    const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    const { supabase } = await import("@/integrations/supabase/client");
+    const { error } = await supabase.from("payments").insert({
+      contract_id: paymentPrompt.contractId,
+      tenant_id: paymentPrompt.tenantId ?? null,
+      month: monthKey,
+      amount: paymentPrompt.monthlyRent,
+      utilities: 0,
+      status: "pending",
+    } as any);
+    if (error) {
+      toast.error("No se pudo generar el pago");
+    } else {
+      toast.success(`Pago de ${monthLabel(now)} generado correctamente`);
+    }
+    setPaymentPrompt(null);
   };
 
   const confirmRelease = () => {
