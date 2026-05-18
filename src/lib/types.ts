@@ -94,6 +94,10 @@ export interface RentalRequest {
   bio?: string;
   recommendations?: string;
   profilePhotoUrl?: string;
+  photos?: string[];
+  employer?: string;
+  workCertificateUrl?: string;
+  creditAuth?: boolean;
   createdAt: string;
   /** Fecha de la última actualización (respuesta del owner). */
   updatedAt?: string;
