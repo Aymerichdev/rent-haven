@@ -35,6 +35,7 @@ import { Plus, Trash2, Pencil, Building2, KeyRound, DoorOpen } from "lucide-reac
 import type { Unit } from "@/lib/types";
 import { toast } from "sonner";
 import { ImageUploader } from "@/components/site/ImageUploader";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/owner/units")({
   component: Page,
