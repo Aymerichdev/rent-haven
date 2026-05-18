@@ -44,7 +44,10 @@ const initialTenantForm: TenantOnboardingForm = {
   occupation: "",
   bio: "",
   recommendations: "",
-  photoUrl: "",
+  photos: [],
+  employer: "",
+  workCertificateUrl: "",
+  creditAuth: false,
 };
 
 const initialOwnerForm: OwnerOnboardingForm = {
@@ -168,9 +171,14 @@ function Page() {
           occupation: tenantForm.occupation.trim(),
           bio: tenantForm.bio.trim() || null,
           recommendations: tenantForm.recommendations.trim() || null,
-          profile_photo_url: tenantForm.photoUrl || "",
+          profile_photo_url: tenantForm.photos[0] ?? null,
+          photos: tenantForm.photos,
+          employer: tenantForm.employer.trim() || null,
+          work_certificate_url: tenantForm.workCertificateUrl || null,
+          credit_auth: !!tenantForm.creditAuth,
+          credit_auth_date: tenantForm.creditAuth ? new Date().toISOString() : null,
           updated_at: new Date().toISOString(),
-        });
+        } as any);
         if (error) throw error;
       } else {
         const { error } = await supabase.from("owner_profiles").upsert({
@@ -190,7 +198,7 @@ function Page() {
         .update({
           role: accountForm.role,
           name: accountForm.name,
-          avatar: role === "tenant" ? tenantForm.photoUrl || null : ownerForm.photoUrl || null,
+          avatar: role === "tenant" ? tenantForm.photos[0] ?? null : ownerForm.photoUrl || null,
         })
         .eq("id", createdUser.id);
       if (profileError) throw profileError;
@@ -520,16 +528,22 @@ function Page() {
                     </div>
 
                     {createdUser ? (
-                      <ImageUploader
-                        folder={"profiles/" + createdUser.id}
-                        label="Foto de perfil"
-                        value={role === "tenant" ? tenantForm.photoUrl : ownerForm.photoUrl}
-                        onChange={(url) =>
-                          role === "tenant"
-                            ? setTenantForm({ ...tenantForm, photoUrl: url ?? "" })
-                            : setOwnerForm({ ...ownerForm, photoUrl: url ?? "" })
-                        }
-                      />
+                      role === "tenant" ? (
+                        <ImageUploader
+                          folder={"profiles/" + createdUser.id}
+                          label="Fotos de perfil (mínimo 1)"
+                          multiple
+                          value={tenantForm.photos}
+                          onChange={(urls) => setTenantForm({ ...tenantForm, photos: urls })}
+                        />
+                      ) : (
+                        <ImageUploader
+                          folder={"profiles/" + createdUser.id}
+                          label="Foto de perfil"
+                          value={ownerForm.photoUrl}
+                          onChange={(url) => setOwnerForm({ ...ownerForm, photoUrl: url ?? "" })}
+                        />
+                      )
                     ) : (
                       <p className="text-sm text-muted-foreground">Creando la sesión inicial...</p>
                     )}

@@ -399,6 +399,8 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
 
     try {
+      const tenantPhoto =
+        data.role === "tenant" ? (data.data.photos[0] ?? "") : "";
       const sharedMetadata =
         data.role === "tenant"
           ? {
@@ -408,7 +410,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
               occupation: data.data.occupation.trim(),
               bio: data.data.bio.trim(),
               recommendations: data.data.recommendations.trim(),
-              profile_photo_url: data.data.photoUrl,
+              profile_photo_url: tenantPhoto,
             }
           : {
               onboarding_role: "owner",
@@ -421,25 +423,24 @@ export const useAppStore = create<AppState>()((set, get) => ({
 
       const { error: metadataError } = await supabase.auth.updateUser({ data: sharedMetadata });
       if (metadataError) {
-        // eslint-disable-next-line no-console
         console.error("[store] Completar perfil: auth.updateUser failed", metadataError);
         throw metadataError;
       }
 
       if (data.role === "tenant") {
-        if (data.data.photoUrl) {
+        if (tenantPhoto) {
           const { error: avatarError } = await supabase
             .from("profiles")
-            .update({ avatar: data.data.photoUrl })
+            .update({ avatar: tenantPhoto })
             .eq("id", user.id);
           if (avatarError) throw avatarError;
           set((state) => ({
             currentUser:
               state.currentUser?.id === user.id
-                ? { ...state.currentUser, avatar: data.data.photoUrl }
+                ? { ...state.currentUser, avatar: tenantPhoto }
                 : state.currentUser,
             users: state.users.map((profile) =>
-              profile.id === user.id ? { ...profile, avatar: data.data.photoUrl } : profile,
+              profile.id === user.id ? { ...profile, avatar: tenantPhoto } : profile,
             ),
           }));
         }
@@ -451,9 +452,14 @@ export const useAppStore = create<AppState>()((set, get) => ({
           occupation: data.data.occupation.trim(),
           bio: data.data.bio.trim() || null,
           recommendations: data.data.recommendations.trim() || null,
-          profile_photo_url: data.data.photoUrl,
+          profile_photo_url: tenantPhoto || null,
+          photos: data.data.photos,
+          employer: data.data.employer.trim() || null,
+          work_certificate_url: data.data.workCertificateUrl || null,
+          credit_auth: !!data.data.creditAuth,
+          credit_auth_date: data.data.creditAuth ? new Date().toISOString() : null,
           updated_at: new Date().toISOString(),
-        });
+        } as any);
         if (error && !isMissingRelationError(error)) throw error;
       } else {
         if (data.data.photoUrl) {
