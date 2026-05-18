@@ -189,7 +189,25 @@ function Page() {
             <Field label="Teléfono" value={p.phone} editing={editing} onChange={(v) => set({ phone: v })} />
             <Field label="Cédula" value={p.national_id} editing={editing} onChange={(v) => set({ national_id: v })} />
             <Field label="Ocupación" value={p.occupation} editing={editing} onChange={(v) => set({ occupation: v })} />
-            <Field label="Orden patronal / Constancia de trabajo" value={p.employer ?? ""} editing={editing} onChange={(v) => set({ employer: v })} />
+            <div>
+              <Label>Orden patronal / Constancia de trabajo (opcional)</Label>
+              {editing ? (
+                <div className="mt-2">
+                  <ImageUploader
+                    folder={"profiles/" + currentUser?.id + "/employer"}
+                    label="Orden patronal / Constancia de trabajo (opcional)"
+                    value={p.employer ?? ""}
+                    onChange={(url) => set({ employer: url ?? "" })}
+                  />
+                </div>
+              ) : p.employer ? (
+                <a href={p.employer} target="_blank" rel="noopener" className="mt-2 inline-flex items-center gap-2 text-sm text-primary hover:underline">
+                  <FileText className="h-4 w-4" /> Ver orden patronal
+                </a>
+              ) : (
+                <p className="mt-1 text-sm text-muted-foreground">Sin archivo adjunto</p>
+              )}
+            </div>
           </div>
 
           <div>
