@@ -143,6 +143,174 @@ function Index() {
         </div>
       </section>
 
+      {/* SERVICIOS */}
+      <section id="servicios" className="mt-16">
+        <div className="bg-neutral-900 py-16 text-white">
+          <div className="mx-auto max-w-7xl px-6 text-center">
+            <h2 className="font-display text-3xl font-bold sm:text-4xl">Servicios</h2>
+            <p className="mt-2 text-sm text-neutral-300">
+              Soluciones integrales para propietarios, inquilinos y futuros residentes.
+            </p>
+          </div>
+        </div>
+
+        <div className="mx-auto -mt-10 grid max-w-7xl gap-6 px-6 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            {
+              img: prop1,
+              title: "Propietarios",
+              items: [
+                "Administración de condominios y propiedades individuales",
+                "Gestión y cobro de mensualidades",
+                "Atención a inquilinos",
+                "Coordinación de mantenimiento y reparaciones",
+              ],
+            },
+            {
+              img: prop2,
+              title: "Inquilinos",
+              items: [
+                "Solicitud de reparaciones y mantenimiento",
+                "Consulta de fechas de pago",
+                "Reporte de pagos en línea",
+                "Comunicación directa con la administración",
+              ],
+            },
+            {
+              img: prop3,
+              title: "En búsqueda de tu nuevo hogar",
+              items: [
+                "Propiedades disponibles para alquiler",
+                "Información clara y actualizada",
+                "Coordinación de visitas",
+              ],
+            },
+          ].map((card) => (
+            <div key={card.title} className="overflow-hidden rounded-2xl bg-white shadow-elegant">
+              <img src={card.img} alt={card.title} className="h-48 w-full object-cover" />
+              <div className="p-6">
+                <h3 className="font-display text-xl font-bold text-neutral-900">{card.title}</h3>
+                <ul className="mt-4 space-y-2">
+                  {card.items.map((it) => (
+                    <li key={it} className="flex items-start gap-2 text-sm text-neutral-700">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#dc2626]" />
+                      <span>{it}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="relative mt-16 h-72 w-full overflow-hidden">
+          <img src={prop4} alt="" className="absolute inset-0 h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-neutral-900/70" />
+          <div className="relative mx-auto flex h-full max-w-4xl flex-col items-center justify-center px-6 text-center text-white">
+            <Quote className="h-10 w-10 text-[#dc2626]" />
+            <p className="mt-4 font-display text-xl leading-relaxed sm:text-2xl">
+              "Alquilar con BR Internacional ha sido una experiencia increíble. Su atención al
+              cliente y la calidad de sus propiedades son excepcionales."
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* SOBRE NOSOTROS */}
+      <section id="sobre-nosotros">
+        <div className="relative h-80 w-full overflow-hidden">
+          <img src={hero} alt="" className="absolute inset-0 h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-neutral-900/80" />
+          <div className="relative mx-auto flex h-full max-w-4xl flex-col items-center justify-center px-6 text-center text-white">
+            <h2 className="font-display text-4xl font-bold sm:text-5xl">Sobre Nosotros</h2>
+            <p className="mt-3 text-base font-medium text-neutral-200 sm:text-lg">
+              Una administración moderna, humana y transparente
+            </p>
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-neutral-300">
+              Trabajamos para brindar tranquilidad a propietarios y bienestar a inquilinos,
+              apoyándonos en procesos claros, comunicación constante y tecnología accesible.
+              Nuestro compromiso es cuidar tu propiedad como si fuera nuestra y mantener relaciones
+              basadas en respeto y confianza.
+            </p>
+          </div>
+          <svg
+            className="absolute bottom-0 left-0 h-12 w-full text-background"
+            viewBox="0 0 1440 80"
+            preserveAspectRatio="none"
+          >
+            <path d="M0,40 C360,100 1080,0 1440,40 L1440,80 L0,80 Z" fill="currentColor" />
+          </svg>
+        </div>
+
+        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 lg:grid-cols-2">
+          <div className="overflow-hidden rounded-2xl shadow-elegant">
+            <img src={prop3} alt="" className="h-full w-full object-cover" />
+          </div>
+          <div className="space-y-6">
+            <div>
+              <h3 className="font-display text-2xl font-bold text-neutral-900">Misión</h3>
+              <p className="mt-2 text-sm leading-relaxed text-neutral-700">
+                Ofrecer un servicio de administración profesional que proteja la inversión de los
+                propietarios y brinde a los inquilinos un hogar confortable y bien gestionado.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-display text-2xl font-bold text-neutral-900">Visión</h3>
+              <p className="mt-2 text-sm leading-relaxed text-neutral-700">
+                Ser la administradora de propiedades de referencia en Costa Rica, reconocida por
+                nuestra cercanía, transparencia y uso inteligente de la tecnología.
+              </p>
+            </div>
+            <Button asChild className="rounded-full bg-[#dc2626] px-6 text-white hover:bg-[#b91c1c]">
+              <Link to="/units">Más información sobre nuestras propiedades</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="bg-neutral-50 py-20">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <h2 className="font-display text-3xl font-bold text-neutral-900 sm:text-4xl">
+            Preguntas Frecuentes
+          </h2>
+          <p className="mt-2 text-sm text-neutral-600">
+            ¿Tienes dudas? Aquí podrías encontrar algunas respuestas
+          </p>
+
+          <Accordion type="single" collapsible className="mt-10 text-left">
+            <AccordionItem value="q1">
+              <AccordionTrigger>¿Cómo reporto el pago de mi alquiler?</AccordionTrigger>
+              <AccordionContent>
+                Desde tu panel de inquilino puedes reportar el pago en la sección de Pagos,
+                adjuntando el comprobante. Recibirás confirmación una vez sea verificado.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="q2">
+              <AccordionTrigger>¿Cómo solicito una reparación?</AccordionTrigger>
+              <AccordionContent>
+                Usa la sección de Mensajes en tu panel para enviarnos los detalles de la
+                reparación. Coordinaremos la visita técnica lo antes posible.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="q3">
+              <AccordionTrigger>¿Qué incluye la administración de condominios?</AccordionTrigger>
+              <AccordionContent>
+                Incluye gestión de cobros, mantenimiento de áreas comunes, atención a residentes,
+                reservas de amenidades y reportes financieros periódicos.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="q4">
+              <AccordionTrigger>¿Cómo puedo alquilar una propiedad?</AccordionTrigger>
+              <AccordionContent>
+                Explora nuestras propiedades disponibles, crea tu cuenta de inquilino y envía una
+                solicitud desde la unidad de tu interés. Te contactaremos para coordinar la visita.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );
