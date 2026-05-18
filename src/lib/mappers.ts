@@ -185,6 +185,10 @@ export const rowToRequest = (r: Tables["rental_requests"]["Row"]): RentalRequest
     bio?: string | null;
     recommendations?: string | null;
     profile_photo_url?: string | null;
+    photos?: string[] | null;
+    employer?: string | null;
+    work_certificate_url?: string | null;
+    credit_auth?: boolean | null;
   };
 
   return ({
@@ -201,6 +205,10 @@ export const rowToRequest = (r: Tables["rental_requests"]["Row"]): RentalRequest
   bio: row.bio ?? undefined,
   recommendations: row.recommendations ?? undefined,
   profilePhotoUrl: row.profile_photo_url ?? undefined,
+  photos: row.photos ?? undefined,
+  employer: row.employer ?? undefined,
+  workCertificateUrl: row.work_certificate_url ?? undefined,
+  creditAuth: row.credit_auth ?? undefined,
   createdAt: (r.created_at ?? "").slice(0, 10),
   updatedAt: r.updated_at ? r.updated_at.slice(0, 10) : undefined,
 });
