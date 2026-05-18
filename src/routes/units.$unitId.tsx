@@ -32,38 +32,43 @@ function Page() {
   const createReq = useAppStore((s) => s.createRentalRequest);
   const nav = useNavigate();
   const [msg, setMsg] = useState("");
-  const [phone, setPhone] = useState("");
-  const [tenantProfileReady, setTenantProfileReady] = useState(false);
+  const [tenantProfile, setTenantProfile] = useState<{
+    phone?: string;
+    national_id?: string;
+    occupation?: string;
+    bio?: string | null;
+    employer?: string | null;
+    work_certificate_url?: string | null;
+    credit_auth?: boolean | null;
+    profile_photo_url?: string | null;
+    photos?: string[] | null;
+  } | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
+  const tenantProfileReady = Boolean(
+    tenantProfile &&
+      tenantProfile.phone?.trim() &&
+      tenantProfile.national_id?.trim() &&
+      tenantProfile.occupation?.trim() &&
+      (tenantProfile.photos?.length ?? 0) > 0,
+  );
 
   useEffect(() => {
     let cancelled = false;
-
-    const loadTenantProfile = async () => {
+    const load = async () => {
       if (!user || user.role !== "tenant") {
-        if (!cancelled) setTenantProfileReady(false);
+        if (!cancelled) setTenantProfile(null);
         return;
       }
-
-      const { data: tenantProfile } = await supabase
+      const { data } = await supabase
         .from("tenant_profiles")
         .select("*")
         .eq("id", user.id)
         .maybeSingle();
-
-      const ready = Boolean(
-        tenantProfile &&
-          tenantProfile.phone?.trim() &&
-          tenantProfile.national_id?.trim() &&
-          tenantProfile.occupation?.trim(),
-      );
-      if (!cancelled) {
-        setTenantProfileReady(ready);
-        setPhone(tenantProfile?.phone ?? "");
-      }
+      if (!cancelled) setTenantProfile(data as typeof tenantProfile);
     };
-
-    loadTenantProfile();
+    load();
     return () => {
       cancelled = true;
     };
@@ -87,7 +92,7 @@ function Page() {
     );
   }
 
-  const submit = () => {
+  const openConfirm = () => {
     if (!user) {
       toast.error("Inicia sesión para solicitar el alquiler");
       nav({ to: "/login" });
@@ -101,16 +106,28 @@ function Page() {
       toast.error("Completa tu perfil antes de enviar solicitudes");
       return;
     }
-    createReq({
-      unitId: unit.id,
-      tenantId: user.id,
-      ownerId: unit.ownerId,
-      phone: phone.trim(),
-      message: msg.trim() || "Estoy interesado/a en esta unidad.",
-    });
-    setMsg("");
-    setPhone("");
-    toast.success("Solicitud enviada. El propietario se pondrá en contacto.");
+    setConfirmOpen(true);
+  };
+
+  const submit = async () => {
+    if (!user || !tenantProfile) return;
+    setSubmitting(true);
+    try {
+      await createReq({
+        unitId: unit.id,
+        tenantId: user.id,
+        ownerId: unit.ownerId,
+        phone: tenantProfile.phone ?? "",
+        message: msg.trim() || "Estoy interesado/a en esta unidad.",
+      });
+      setMsg("");
+      setConfirmOpen(false);
+      toast.success("Solicitud enviada. El propietario se pondrá en contacto.");
+    } catch (e) {
+      toast.error((e as Error).message ?? "No se pudo enviar la solicitud");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const city = getUnitCity(unit, building);
