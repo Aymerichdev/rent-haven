@@ -97,7 +97,7 @@ interface AppState {
       deposit: number;
       contractPhotoUrl?: string;
     },
-  ) => Promise<void>;
+  ) => Promise<{ id: string; tenantId?: string; monthlyRent: number } | null>;
   markUnitAvailable: (unitId: string) => Promise<void>;
   deleteUnit: (id: string) => Promise<void>;
 
