@@ -35,6 +35,7 @@ import { Plus, Trash2, Pencil, Building2, KeyRound, DoorOpen } from "lucide-reac
 import type { Unit } from "@/lib/types";
 import { toast } from "sonner";
 import { ImageUploader } from "@/components/site/ImageUploader";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/owner/units")({
   component: Page,
@@ -61,6 +62,11 @@ function Page() {
   const [rentDeposit, setRentDeposit] = useState<number>(0);
   const [rentPhoto, setRentPhoto] = useState<string>("");
   const [releaseUnit, setReleaseUnit] = useState<Unit | null>(null);
+  const [paymentPrompt, setPaymentPrompt] = useState<{
+    contractId: string;
+    tenantId?: string;
+    monthlyRent: number;
+  } | null>(null);
 
   const openRent = (u: Unit) => {
     setRentUnit(u);
@@ -76,7 +82,7 @@ function Page() {
     if (!rentUnit) return;
     if (!rentStart || !rentEnd) return toast.error("Inicio y fin son obligatorios");
     if (rentEnd <= rentStart) return toast.error("La fecha de fin debe ser posterior al inicio");
-    await markRented(rentUnit.id, {
+    const created = await markRented(rentUnit.id, {
       tenantId: rentTenant || undefined,
       startDate: rentStart,
       endDate: rentEnd,
@@ -86,6 +92,36 @@ function Page() {
     });
     toast.success("Unidad marcada como alquilada");
     setRentUnit(null);
+    if (created) {
+      setPaymentPrompt({
+        contractId: created.id,
+        tenantId: created.tenantId,
+        monthlyRent: created.monthlyRent,
+      });
+    }
+  };
+
+  const monthLabel = (d: Date) =>
+    d.toLocaleDateString("es-ES", { month: "long", year: "numeric" });
+
+  const generateCurrentPayment = async () => {
+    if (!paymentPrompt) return;
+    const now = new Date();
+    const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    const { error } = await supabase.from("payments").insert({
+      contract_id: paymentPrompt.contractId,
+      tenant_id: paymentPrompt.tenantId ?? null,
+      month: monthKey,
+      amount: paymentPrompt.monthlyRent,
+      utilities: 0,
+      status: "pending",
+    } as any);
+    if (error) {
+      toast.error("No se pudo generar el pago");
+    } else {
+      toast.success(`Pago de ${monthLabel(now)} generado correctamente`);
+    }
+    setPaymentPrompt(null);
   };
 
   const confirmRelease = () => {
@@ -588,6 +624,22 @@ function Page() {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={confirmRelease}>Confirmar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={!!paymentPrompt} onOpenChange={(o) => !o && setPaymentPrompt(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Generar pago del mes actual</AlertDialogTitle>
+            <AlertDialogDescription>
+              ¿Deseas generar el pago del mes actual ({monthLabel(new Date())})?
+              {paymentPrompt ? ` El monto será de €${paymentPrompt.monthlyRent}.` : ""}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setPaymentPrompt(null)}>No, después</AlertDialogCancel>
+            <AlertDialogAction onClick={generateCurrentPayment}>Sí, generar pago</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

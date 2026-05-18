@@ -97,7 +97,7 @@ interface AppState {
       deposit: number;
       contractPhotoUrl?: string;
     },
-  ) => Promise<void>;
+  ) => Promise<{ id: string; tenantId?: string; monthlyRent: number } | null>;
   markUnitAvailable: (unitId: string) => Promise<void>;
   deleteUnit: (id: string) => Promise<void>;
 
@@ -761,7 +761,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
 
   markUnitRented: async (unitId, contract) => {
   const unit = get().units.find((u) => u.id === unitId);
-  if (!unit) return;
+  if (!unit) return null;
 
   // Cerrar contratos activos anteriores directo en DB
   await supabase
@@ -787,13 +787,13 @@ export const useAppStore = create<AppState>()((set, get) => ({
     )
     .select()
     .single();
-  if (cErr || !contractRow) return fail("Crear contrato", cErr);
+  if (cErr || !contractRow) { fail("Crear contrato", cErr); return null; }
 
   const { error: uErr } = await supabase
     .from("units")
     .update({ status: "rented", tenant_id: contract.tenantId ?? null })
     .eq("id", unitId);
-  if (uErr) return fail("Marcar alquilada", uErr);
+  if (uErr) { fail("Marcar alquilada", uErr); return null; }
 
   set((s) => ({
     units: s.units.map((u) =>
@@ -806,6 +806,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
       rowToContract(contractRow),
     ],
   }));
+  return { id: (contractRow as any).id as string, tenantId: contract.tenantId, monthlyRent: contract.monthlyRent };
 },
 
 
