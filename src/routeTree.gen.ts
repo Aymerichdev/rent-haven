@@ -9,38 +9,419 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TenantRouteImport } from './routes/tenant'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as OwnerRouteImport } from './routes/owner'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as ChangePasswordRouteImport } from './routes/change-password'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UnitsIndexRouteImport } from './routes/units.index'
+import { Route as TenantIndexRouteImport } from './routes/tenant.index'
+import { Route as OwnerIndexRouteImport } from './routes/owner.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as UnitsUnitIdRouteImport } from './routes/units.$unitId'
+import { Route as TenantRequestsRouteImport } from './routes/tenant.requests'
+import { Route as TenantRentalsRouteImport } from './routes/tenant.rentals'
+import { Route as TenantProfileRouteImport } from './routes/tenant/profile'
+import { Route as TenantPaymentsRouteImport } from './routes/tenant.payments'
+import { Route as TenantContractsRouteImport } from './routes/tenant.contracts'
+import { Route as TenantAmenitiesRouteImport } from './routes/tenant.amenities'
+import { Route as OwnerUnitsRouteImport } from './routes/owner.units'
+import { Route as OwnerRequestsRouteImport } from './routes/owner.requests'
+import { Route as OwnerProfileRouteImport } from './routes/owner/profile'
+import { Route as OwnerPaymentsRouteImport } from './routes/owner.payments'
+import { Route as OwnerMetersRouteImport } from './routes/owner.meters'
+import { Route as OwnerBuildingsRouteImport } from './routes/owner.buildings'
+import { Route as OwnerAmenitiesRouteImport } from './routes/owner.amenities'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as OwnerBuildingsBuildingIdRouteImport } from './routes/owner.buildings.$buildingId'
 
+const TenantRoute = TenantRouteImport.update({
+  id: '/tenant',
+  path: '/tenant',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OwnerRoute = OwnerRouteImport.update({
+  id: '/owner',
+  path: '/owner',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChangePasswordRoute = ChangePasswordRouteImport.update({
+  id: '/change-password',
+  path: '/change-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UnitsIndexRoute = UnitsIndexRouteImport.update({
+  id: '/units/',
+  path: '/units/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TenantIndexRoute = TenantIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TenantRoute,
+} as any)
+const OwnerIndexRoute = OwnerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const UnitsUnitIdRoute = UnitsUnitIdRouteImport.update({
+  id: '/units/$unitId',
+  path: '/units/$unitId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TenantRequestsRoute = TenantRequestsRouteImport.update({
+  id: '/requests',
+  path: '/requests',
+  getParentRoute: () => TenantRoute,
+} as any)
+const TenantRentalsRoute = TenantRentalsRouteImport.update({
+  id: '/rentals',
+  path: '/rentals',
+  getParentRoute: () => TenantRoute,
+} as any)
+const TenantProfileRoute = TenantProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => TenantRoute,
+} as any)
+const TenantPaymentsRoute = TenantPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => TenantRoute,
+} as any)
+const TenantContractsRoute = TenantContractsRouteImport.update({
+  id: '/contracts',
+  path: '/contracts',
+  getParentRoute: () => TenantRoute,
+} as any)
+const TenantAmenitiesRoute = TenantAmenitiesRouteImport.update({
+  id: '/amenities',
+  path: '/amenities',
+  getParentRoute: () => TenantRoute,
+} as any)
+const OwnerUnitsRoute = OwnerUnitsRouteImport.update({
+  id: '/units',
+  path: '/units',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerRequestsRoute = OwnerRequestsRouteImport.update({
+  id: '/requests',
+  path: '/requests',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerProfileRoute = OwnerProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerPaymentsRoute = OwnerPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerMetersRoute = OwnerMetersRouteImport.update({
+  id: '/meters',
+  path: '/meters',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerBuildingsRoute = OwnerBuildingsRouteImport.update({
+  id: '/buildings',
+  path: '/buildings',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerAmenitiesRoute = OwnerAmenitiesRouteImport.update({
+  id: '/amenities',
+  path: '/amenities',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
+const OwnerBuildingsBuildingIdRoute =
+  OwnerBuildingsBuildingIdRouteImport.update({
+    id: '/$buildingId',
+    path: '/$buildingId',
+    getParentRoute: () => OwnerBuildingsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/change-password': typeof ChangePasswordRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/owner': typeof OwnerRouteWithChildren
+  '/register': typeof RegisterRoute
+  '/tenant': typeof TenantRouteWithChildren
+  '/admin/users': typeof AdminUsersRoute
+  '/owner/amenities': typeof OwnerAmenitiesRoute
+  '/owner/buildings': typeof OwnerBuildingsRouteWithChildren
+  '/owner/meters': typeof OwnerMetersRoute
+  '/owner/payments': typeof OwnerPaymentsRoute
+  '/owner/profile': typeof OwnerProfileRoute
+  '/owner/requests': typeof OwnerRequestsRoute
+  '/owner/units': typeof OwnerUnitsRoute
+  '/tenant/amenities': typeof TenantAmenitiesRoute
+  '/tenant/contracts': typeof TenantContractsRoute
+  '/tenant/payments': typeof TenantPaymentsRoute
+  '/tenant/profile': typeof TenantProfileRoute
+  '/tenant/rentals': typeof TenantRentalsRoute
+  '/tenant/requests': typeof TenantRequestsRoute
+  '/units/$unitId': typeof UnitsUnitIdRoute
+  '/admin/': typeof AdminIndexRoute
+  '/owner/': typeof OwnerIndexRoute
+  '/tenant/': typeof TenantIndexRoute
+  '/units/': typeof UnitsIndexRoute
+  '/owner/buildings/$buildingId': typeof OwnerBuildingsBuildingIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/change-password': typeof ChangePasswordRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/owner/amenities': typeof OwnerAmenitiesRoute
+  '/owner/buildings': typeof OwnerBuildingsRouteWithChildren
+  '/owner/meters': typeof OwnerMetersRoute
+  '/owner/payments': typeof OwnerPaymentsRoute
+  '/owner/profile': typeof OwnerProfileRoute
+  '/owner/requests': typeof OwnerRequestsRoute
+  '/owner/units': typeof OwnerUnitsRoute
+  '/tenant/amenities': typeof TenantAmenitiesRoute
+  '/tenant/contracts': typeof TenantContractsRoute
+  '/tenant/payments': typeof TenantPaymentsRoute
+  '/tenant/profile': typeof TenantProfileRoute
+  '/tenant/rentals': typeof TenantRentalsRoute
+  '/tenant/requests': typeof TenantRequestsRoute
+  '/units/$unitId': typeof UnitsUnitIdRoute
+  '/admin': typeof AdminIndexRoute
+  '/owner': typeof OwnerIndexRoute
+  '/tenant': typeof TenantIndexRoute
+  '/units': typeof UnitsIndexRoute
+  '/owner/buildings/$buildingId': typeof OwnerBuildingsBuildingIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/change-password': typeof ChangePasswordRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/owner': typeof OwnerRouteWithChildren
+  '/register': typeof RegisterRoute
+  '/tenant': typeof TenantRouteWithChildren
+  '/admin/users': typeof AdminUsersRoute
+  '/owner/amenities': typeof OwnerAmenitiesRoute
+  '/owner/buildings': typeof OwnerBuildingsRouteWithChildren
+  '/owner/meters': typeof OwnerMetersRoute
+  '/owner/payments': typeof OwnerPaymentsRoute
+  '/owner/profile': typeof OwnerProfileRoute
+  '/owner/requests': typeof OwnerRequestsRoute
+  '/owner/units': typeof OwnerUnitsRoute
+  '/tenant/amenities': typeof TenantAmenitiesRoute
+  '/tenant/contracts': typeof TenantContractsRoute
+  '/tenant/payments': typeof TenantPaymentsRoute
+  '/tenant/profile': typeof TenantProfileRoute
+  '/tenant/rentals': typeof TenantRentalsRoute
+  '/tenant/requests': typeof TenantRequestsRoute
+  '/units/$unitId': typeof UnitsUnitIdRoute
+  '/admin/': typeof AdminIndexRoute
+  '/owner/': typeof OwnerIndexRoute
+  '/tenant/': typeof TenantIndexRoute
+  '/units/': typeof UnitsIndexRoute
+  '/owner/buildings/$buildingId': typeof OwnerBuildingsBuildingIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/change-password'
+    | '/forgot-password'
+    | '/login'
+    | '/owner'
+    | '/register'
+    | '/tenant'
+    | '/admin/users'
+    | '/owner/amenities'
+    | '/owner/buildings'
+    | '/owner/meters'
+    | '/owner/payments'
+    | '/owner/profile'
+    | '/owner/requests'
+    | '/owner/units'
+    | '/tenant/amenities'
+    | '/tenant/contracts'
+    | '/tenant/payments'
+    | '/tenant/profile'
+    | '/tenant/rentals'
+    | '/tenant/requests'
+    | '/units/$unitId'
+    | '/admin/'
+    | '/owner/'
+    | '/tenant/'
+    | '/units/'
+    | '/owner/buildings/$buildingId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/change-password'
+    | '/forgot-password'
+    | '/login'
+    | '/register'
+    | '/admin/users'
+    | '/owner/amenities'
+    | '/owner/buildings'
+    | '/owner/meters'
+    | '/owner/payments'
+    | '/owner/profile'
+    | '/owner/requests'
+    | '/owner/units'
+    | '/tenant/amenities'
+    | '/tenant/contracts'
+    | '/tenant/payments'
+    | '/tenant/profile'
+    | '/tenant/rentals'
+    | '/tenant/requests'
+    | '/units/$unitId'
+    | '/admin'
+    | '/owner'
+    | '/tenant'
+    | '/units'
+    | '/owner/buildings/$buildingId'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/change-password'
+    | '/forgot-password'
+    | '/login'
+    | '/owner'
+    | '/register'
+    | '/tenant'
+    | '/admin/users'
+    | '/owner/amenities'
+    | '/owner/buildings'
+    | '/owner/meters'
+    | '/owner/payments'
+    | '/owner/profile'
+    | '/owner/requests'
+    | '/owner/units'
+    | '/tenant/amenities'
+    | '/tenant/contracts'
+    | '/tenant/payments'
+    | '/tenant/profile'
+    | '/tenant/rentals'
+    | '/tenant/requests'
+    | '/units/$unitId'
+    | '/admin/'
+    | '/owner/'
+    | '/tenant/'
+    | '/units/'
+    | '/owner/buildings/$buildingId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  ChangePasswordRoute: typeof ChangePasswordRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  LoginRoute: typeof LoginRoute
+  OwnerRoute: typeof OwnerRouteWithChildren
+  RegisterRoute: typeof RegisterRoute
+  TenantRoute: typeof TenantRouteWithChildren
+  UnitsUnitIdRoute: typeof UnitsUnitIdRoute
+  UnitsIndexRoute: typeof UnitsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tenant': {
+      id: '/tenant'
+      path: '/tenant'
+      fullPath: '/tenant'
+      preLoaderRoute: typeof TenantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/owner': {
+      id: '/owner'
+      path: '/owner'
+      fullPath: '/owner'
+      preLoaderRoute: typeof OwnerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/change-password': {
+      id: '/change-password'
+      path: '/change-password'
+      fullPath: '/change-password'
+      preLoaderRoute: typeof ChangePasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +429,231 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/units/': {
+      id: '/units/'
+      path: '/units'
+      fullPath: '/units/'
+      preLoaderRoute: typeof UnitsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tenant/': {
+      id: '/tenant/'
+      path: '/'
+      fullPath: '/tenant/'
+      preLoaderRoute: typeof TenantIndexRouteImport
+      parentRoute: typeof TenantRoute
+    }
+    '/owner/': {
+      id: '/owner/'
+      path: '/'
+      fullPath: '/owner/'
+      preLoaderRoute: typeof OwnerIndexRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/units/$unitId': {
+      id: '/units/$unitId'
+      path: '/units/$unitId'
+      fullPath: '/units/$unitId'
+      preLoaderRoute: typeof UnitsUnitIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tenant/requests': {
+      id: '/tenant/requests'
+      path: '/requests'
+      fullPath: '/tenant/requests'
+      preLoaderRoute: typeof TenantRequestsRouteImport
+      parentRoute: typeof TenantRoute
+    }
+    '/tenant/rentals': {
+      id: '/tenant/rentals'
+      path: '/rentals'
+      fullPath: '/tenant/rentals'
+      preLoaderRoute: typeof TenantRentalsRouteImport
+      parentRoute: typeof TenantRoute
+    }
+    '/tenant/profile': {
+      id: '/tenant/profile'
+      path: '/profile'
+      fullPath: '/tenant/profile'
+      preLoaderRoute: typeof TenantProfileRouteImport
+      parentRoute: typeof TenantRoute
+    }
+    '/tenant/payments': {
+      id: '/tenant/payments'
+      path: '/payments'
+      fullPath: '/tenant/payments'
+      preLoaderRoute: typeof TenantPaymentsRouteImport
+      parentRoute: typeof TenantRoute
+    }
+    '/tenant/contracts': {
+      id: '/tenant/contracts'
+      path: '/contracts'
+      fullPath: '/tenant/contracts'
+      preLoaderRoute: typeof TenantContractsRouteImport
+      parentRoute: typeof TenantRoute
+    }
+    '/tenant/amenities': {
+      id: '/tenant/amenities'
+      path: '/amenities'
+      fullPath: '/tenant/amenities'
+      preLoaderRoute: typeof TenantAmenitiesRouteImport
+      parentRoute: typeof TenantRoute
+    }
+    '/owner/units': {
+      id: '/owner/units'
+      path: '/units'
+      fullPath: '/owner/units'
+      preLoaderRoute: typeof OwnerUnitsRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/requests': {
+      id: '/owner/requests'
+      path: '/requests'
+      fullPath: '/owner/requests'
+      preLoaderRoute: typeof OwnerRequestsRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/profile': {
+      id: '/owner/profile'
+      path: '/profile'
+      fullPath: '/owner/profile'
+      preLoaderRoute: typeof OwnerProfileRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/payments': {
+      id: '/owner/payments'
+      path: '/payments'
+      fullPath: '/owner/payments'
+      preLoaderRoute: typeof OwnerPaymentsRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/meters': {
+      id: '/owner/meters'
+      path: '/meters'
+      fullPath: '/owner/meters'
+      preLoaderRoute: typeof OwnerMetersRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/buildings': {
+      id: '/owner/buildings'
+      path: '/buildings'
+      fullPath: '/owner/buildings'
+      preLoaderRoute: typeof OwnerBuildingsRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/amenities': {
+      id: '/owner/amenities'
+      path: '/amenities'
+      fullPath: '/owner/amenities'
+      preLoaderRoute: typeof OwnerAmenitiesRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/owner/buildings/$buildingId': {
+      id: '/owner/buildings/$buildingId'
+      path: '/$buildingId'
+      fullPath: '/owner/buildings/$buildingId'
+      preLoaderRoute: typeof OwnerBuildingsBuildingIdRouteImport
+      parentRoute: typeof OwnerBuildingsRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminUsersRoute: typeof AdminUsersRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminUsersRoute: AdminUsersRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface OwnerBuildingsRouteChildren {
+  OwnerBuildingsBuildingIdRoute: typeof OwnerBuildingsBuildingIdRoute
+}
+
+const OwnerBuildingsRouteChildren: OwnerBuildingsRouteChildren = {
+  OwnerBuildingsBuildingIdRoute: OwnerBuildingsBuildingIdRoute,
+}
+
+const OwnerBuildingsRouteWithChildren = OwnerBuildingsRoute._addFileChildren(
+  OwnerBuildingsRouteChildren,
+)
+
+interface OwnerRouteChildren {
+  OwnerAmenitiesRoute: typeof OwnerAmenitiesRoute
+  OwnerBuildingsRoute: typeof OwnerBuildingsRouteWithChildren
+  OwnerMetersRoute: typeof OwnerMetersRoute
+  OwnerPaymentsRoute: typeof OwnerPaymentsRoute
+  OwnerProfileRoute: typeof OwnerProfileRoute
+  OwnerRequestsRoute: typeof OwnerRequestsRoute
+  OwnerUnitsRoute: typeof OwnerUnitsRoute
+  OwnerIndexRoute: typeof OwnerIndexRoute
+}
+
+const OwnerRouteChildren: OwnerRouteChildren = {
+  OwnerAmenitiesRoute: OwnerAmenitiesRoute,
+  OwnerBuildingsRoute: OwnerBuildingsRouteWithChildren,
+  OwnerMetersRoute: OwnerMetersRoute,
+  OwnerPaymentsRoute: OwnerPaymentsRoute,
+  OwnerProfileRoute: OwnerProfileRoute,
+  OwnerRequestsRoute: OwnerRequestsRoute,
+  OwnerUnitsRoute: OwnerUnitsRoute,
+  OwnerIndexRoute: OwnerIndexRoute,
+}
+
+const OwnerRouteWithChildren = OwnerRoute._addFileChildren(OwnerRouteChildren)
+
+interface TenantRouteChildren {
+  TenantAmenitiesRoute: typeof TenantAmenitiesRoute
+  TenantContractsRoute: typeof TenantContractsRoute
+  TenantPaymentsRoute: typeof TenantPaymentsRoute
+  TenantProfileRoute: typeof TenantProfileRoute
+  TenantRentalsRoute: typeof TenantRentalsRoute
+  TenantRequestsRoute: typeof TenantRequestsRoute
+  TenantIndexRoute: typeof TenantIndexRoute
+}
+
+const TenantRouteChildren: TenantRouteChildren = {
+  TenantAmenitiesRoute: TenantAmenitiesRoute,
+  TenantContractsRoute: TenantContractsRoute,
+  TenantPaymentsRoute: TenantPaymentsRoute,
+  TenantProfileRoute: TenantProfileRoute,
+  TenantRentalsRoute: TenantRentalsRoute,
+  TenantRequestsRoute: TenantRequestsRoute,
+  TenantIndexRoute: TenantIndexRoute,
+}
+
+const TenantRouteWithChildren =
+  TenantRoute._addFileChildren(TenantRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
+  ChangePasswordRoute: ChangePasswordRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
+  LoginRoute: LoginRoute,
+  OwnerRoute: OwnerRouteWithChildren,
+  RegisterRoute: RegisterRoute,
+  TenantRoute: TenantRouteWithChildren,
+  UnitsUnitIdRoute: UnitsUnitIdRoute,
+  UnitsIndexRoute: UnitsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
