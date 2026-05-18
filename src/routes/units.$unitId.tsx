@@ -277,52 +277,19 @@ function Page() {
 
               {user?.role === "tenant" && !tenantProfileReady ? (
                 <Alert variant="destructive" className="mt-5">
-                  <p>Debes completar tu perfil antes de enviar solicitudes de alquiler.</p>
+                  <p>Debes completar tu perfil (con al menos una foto) antes de enviar solicitudes.</p>
                   <Link to="/tenant/profile" className="mt-2 inline-block font-medium underline">
                     Completar perfil →
                   </Link>
                 </Alert>
               ) : (
-                <>
-                  <div className="mt-5 space-y-3">
-                    <div>
-                      <Label htmlFor="req-phone" className="text-xs">
-                        Teléfono de contacto *
-                      </Label>
-                      <Input
-                        id="req-phone"
-                        type="tel"
-                        inputMode="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="+506 612 345 678"
-                        maxLength={30}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="req-msg" className="text-xs">
-                        Mensaje
-                      </Label>
-                      <Textarea
-                        id="req-msg"
-                        value={msg}
-                        onChange={(e) => setMsg(e.target.value)}
-                        placeholder="Hola, me gustaría más información..."
-                        maxLength={500}
-                        className="mt-1 min-h-24"
-                      />
-                    </div>
-                  </div>
-
-                  <Button
-                    onClick={submit}
-                    className="mt-4 w-full bg-gradient-warm"
-                    disabled={unit.status !== "available"}
-                  >
-                    {unit.status === "available" ? "Solicitar alquiler" : "No disponible"}
-                  </Button>
-                </>
+                <Button
+                  onClick={openConfirm}
+                  className="mt-5 w-full bg-gradient-warm"
+                  disabled={unit.status !== "available"}
+                >
+                  {unit.status === "available" ? "Solicitar alquiler" : "No disponible"}
+                </Button>
               )}
               {!user && (
                 <p className="mt-3 text-center text-xs text-muted-foreground">
@@ -336,6 +303,92 @@ function Page() {
           </aside>
         </div>
       </section>
+
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Confirma tu solicitud</DialogTitle>
+            <DialogDescription>
+              Esta información de tu perfil se enviará al propietario. Para cambiarla, edita tu perfil.
+            </DialogDescription>
+          </DialogHeader>
+
+          {tenantProfile && (
+            <div className="space-y-4">
+              <div className="flex items-start gap-4 rounded-xl border border-border bg-secondary/30 p-4">
+                {(tenantProfile.profile_photo_url || tenantProfile.photos?.[0]) && (
+                  <img
+                    src={tenantProfile.profile_photo_url || tenantProfile.photos?.[0]}
+                    alt=""
+                    className="h-20 w-20 rounded-full object-cover ring-2 ring-border"
+                  />
+                )}
+                <div className="min-w-0 flex-1 space-y-1 text-sm">
+                  <div className="font-display text-base font-semibold">{user?.name}</div>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                    <span className="inline-flex items-center gap-1">
+                      <Phone className="h-3 w-3" /> {tenantProfile.phone}
+                    </span>
+                    <span>Cédula: {tenantProfile.national_id}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                    {tenantProfile.occupation && (
+                      <span className="inline-flex items-center gap-1">
+                        <BriefcaseBusiness className="h-3 w-3" /> {tenantProfile.occupation}
+                      </span>
+                    )}
+                    {tenantProfile.employer && <span>· {tenantProfile.employer}</span>}
+                  </div>
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {tenantProfile.credit_auth && (
+                      <Badge variant="outline" className="border-success/30 bg-success/10 text-success">
+                        ✓ Autoriza estudio crediticio
+                      </Badge>
+                    )}
+                    {tenantProfile.work_certificate_url && (
+                      <Badge variant="outline" className="gap-1">
+                        <FileText className="h-3 w-3" /> Certificado laboral
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {tenantProfile.photos && tenantProfile.photos.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto">
+                  {tenantProfile.photos.slice(0, 8).map((p, i) => (
+                    <img key={i} src={p} alt="" className="h-16 w-16 shrink-0 rounded-md object-cover" />
+                  ))}
+                </div>
+              )}
+
+              <div>
+                <Label htmlFor="req-msg" className="text-xs">
+                  Mensaje al propietario
+                </Label>
+                <Textarea
+                  id="req-msg"
+                  value={msg}
+                  onChange={(e) => setMsg(e.target.value)}
+                  placeholder="Hola, me gustaría más información..."
+                  maxLength={500}
+                  className="mt-1 min-h-24"
+                />
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmOpen(false)} disabled={submitting}>
+              Cancelar
+            </Button>
+            <Button onClick={submit} disabled={submitting} className="bg-gradient-warm">
+              {submitting ? "Enviando..." : "Enviar solicitud"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Footer />
     </div>
   );
