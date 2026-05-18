@@ -906,17 +906,31 @@ export const useAppStore = create<AppState>()((set, get) => ({
     if (!tenantProfile || !tenantProfile.phone?.trim() || !tenantProfile.national_id?.trim() || !tenantProfile.occupation?.trim()) {
       throw new Error("Completa tu perfil antes de enviar solicitudes");
     }
+    const photos = (tenantProfile as { photos?: string[] | null }).photos ?? [];
+    if (!photos || photos.length === 0) {
+      throw new Error("Sube al menos una foto a tu perfil antes de enviar solicitudes");
+    }
+    const profile = tenantProfile as typeof tenantProfile & {
+      photos?: string[] | null;
+      employer?: string | null;
+      work_certificate_url?: string | null;
+      credit_auth?: boolean | null;
+    };
 
     const { data, error } = await supabase
       .from("rental_requests")
       .insert({
         ...requestToInsert(r),
-        phone: tenantProfile.phone,
-        national_id: tenantProfile.national_id,
-        occupation: tenantProfile.occupation,
-        bio: tenantProfile.bio ?? null,
-        recommendations: tenantProfile.recommendations ?? null,
-        profile_photo_url: tenantProfile.profile_photo_url ?? null,
+        phone: profile.phone,
+        national_id: profile.national_id,
+        occupation: profile.occupation,
+        bio: profile.bio ?? null,
+        recommendations: profile.recommendations ?? null,
+        profile_photo_url: profile.profile_photo_url ?? photos[0] ?? null,
+        photos: photos,
+        employer: profile.employer ?? null,
+        work_certificate_url: profile.work_certificate_url ?? null,
+        credit_auth: !!profile.credit_auth,
         status: "pending",
       } as never)
       .select()
