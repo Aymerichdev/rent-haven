@@ -4,10 +4,17 @@ import { useAppStore, getUnitAddress, getUnitCity } from "@/lib/store";
 import { PublicNavbar, Footer } from "@/components/site/PublicNavbar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Bed, Bath, Square, MapPin, Building2, Heart, Share2, Sparkles } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Bed, Bath, Square, MapPin, Building2, Heart, Share2, Sparkles, FileText, Phone, BriefcaseBusiness } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Alert } from "@/components/ui/alert";
