@@ -2,7 +2,7 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { cleanupAuthSubscription, useAppStore } from "@/lib/store";
-import { closeSupabaseClient, supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
 
 import appCss from "../styles.css?url";
 
@@ -82,7 +82,6 @@ function RootComponent() {
     const onUnload = () => {
       try {
         cleanupAuthSubscription();
-        closeSupabaseClient();
       } catch (e) {
         // ignore
       }

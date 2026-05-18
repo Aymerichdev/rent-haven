@@ -1,75 +1,84 @@
-## Goal
+## Scope
 
-Replace the in-memory Zustand mock data layer with real Supabase calls without touching any route/component code. Then add image uploads (Storage bucket `property-images`) to building/unit/amenity forms.
+Apply 9 improvements to the existing project without rebuilding. Group into phases so each can be verified.
 
-UI stays identical. All `useAppStore` selectors and action signatures stay the same, so no route file needs structural changes — only the building/unit/amenity forms get a new `<ImageUploader>` component.
+## Phase 1 — Database schema
 
-## Approach
+Run migrations:
 
-The store currently exposes synchronous actions like `addBuilding(b) → string` and arrays like `buildings: Building[]`. Supabase is async. To avoid rewriting every route, I'll:
+1. Extend `tenant_profiles`:
+   - `photos text[] default '{}'`
+   - `employer text`, `work_certificate_url text`
+   - `credit_auth boolean default false`, `credit_auth_date timestamptz`
+   - drop NOT NULL on `profile_photo_url`
 
-1. Keep `useAppStore` as the single source of truth in memory, populated from Supabase on login (and on realtime/refetch).
-2. Convert actions to **async** internally — they call Supabase, then update local state with the returned row. Callers that already used them synchronously (almost all do `void` calls or chain via local state) keep working because React re-renders when the store updates. The 1–2 spots that consumed the return value (e.g. `addBuilding` → `string`) become `Promise<string>` and I'll add `await` only there.
-3. Map snake_case ↔ camelCase at the store boundary so `Building.ownerId` in the UI continues to work while the DB column is `owner_id`. A tiny `mappers.ts` per entity.
-4. Auth uses `supabase.auth.*` (email/password) + `profiles` table for role/name/avatar. `currentUser` is hydrated from `onAuthStateChange`.
+2. Extend `rental_requests` with snapshot fields:
+   `national_id, occupation, bio, recommendations, profile_photo_url, photos text[], employer, work_certificate_url, credit_auth boolean`
 
-## Files
+3. New `messages` table + RLS (select/insert/update policies as specified).
 
-**New**
-- `src/lib/mappers.ts` — `rowToBuilding`, `buildingToRow`, … for all 10 tables.
-- `src/lib/storage.ts` — `uploadImages(folder, files)`, `deleteImage(url)`, validation (image/*, 5MB).
-- `src/components/site/ImageUploader.tsx` — shadcn file input + previews + remove buttons. Two variants: `multi` (buildings/units) and `single` (amenities).
+## Phase 2 — Tenant profile redesign (`src/routes/tenant/profile.tsx`)
 
-**Rewrite**
-- `src/lib/store.ts` — same interface, Supabase-backed. Adds `hydrate()` called on login. Removes `persist` middleware (Supabase is the source of truth; only `currentUser` session is restored via supabase auth).
+- View mode: avatar (photos[0]), photo gallery grid, info card with all fields, "Editar" button.
+- Edit mode (toggled): all fields editable, ImageUploader multi for photos (folder `profiles/{userId}`, min 1), single uploader for `work_certificate_url`, checkbox for `credit_auth` (locks after acceptance, shows date).
+- New fields: `employer`, `work_certificate_url`, `credit_auth(_date)`, `photos`.
+- Save sets `profile_photo_url = photos[0]`.
 
-**Edit**
-- `src/routes/__root.tsx` — install `onAuthStateChange` listener that sets `currentUser` and triggers `hydrate()`.
-- `src/routes/owner.buildings.tsx` — add `<ImageUploader multi>` to create/edit dialogs, block submit if `images.length === 0`.
-- `src/routes/owner.buildings.$buildingId.tsx` — same in edit form if applicable.
-- `src/routes/owner.units.tsx` — add `<ImageUploader multi>`, same validation.
-- `src/routes/owner.amenities.tsx` — add `<ImageUploader single>`, optional.
-- `src/lib/types.ts` — add `images: string[]` to `Building`/`Unit` if missing; ensure `photoUrl` on `Amenity`.
+## Phase 3 — Owner profile redesign (`src/routes/owner/profile.tsx`)
 
-**Delete / neutralize**
-- `src/lib/mock-data.ts` — replace exports with empty arrays (kept for type compat) so legacy imports don't crash mid-migration.
+- Same view/edit pattern: avatar, name/email/phone/company_name/tax_id/bio, single photo uploader, save only in edit mode.
 
-## Auth mapping
+## Phase 4 — Register flow (`src/routes/register.tsx`, `src/lib/onboarding.ts`, `src/lib/store.ts`)
 
-| Store action | Supabase call |
-|---|---|
-| `login(email, pwd)` | `auth.signInWithPassword` → fetch `profiles` row |
-| `register({...})` | `auth.signUp` (trigger creates profile) → update role/name |
-| `logout()` | `auth.signOut()` |
-| `changePassword(old, new)` | re-auth then `auth.updateUser({password})` |
-| `resetPassword(email)` | `auth.resetPasswordForEmail` |
+- Update `TenantOnboardingForm`: replace `photoUrl` → `photos: string[]`; add `employer`, `workCertificateUrl`, `creditAuth`.
+- `validateTenantStep`: require photos.length ≥ 1, nationalId, occupation.
+- Register step 2 (tenant): multi-photo ImageUploader, new fields + checkbox.
+- Register step 2 (owner): single optional photo + optional fields.
+- `completeOnboarding` (tenant): upsert with `photos`, `profile_photo_url = photos[0] ?? ""`, `employer`, `work_certificate_url`, `credit_auth`, `credit_auth_date`.
 
-## Storage
+## Phase 5 — Rental request redesign + autofill
 
-- Bucket: `property-images` (assumed public read).
-- Paths: `buildings/{id}/{uuid}.{ext}`, `units/{id}/{uuid}.{ext}`, `amenities/{id}/{ext}`.
-- Flow: create record first (to get id) → upload files → patch row with `images`/`photo_url` URLs. For new records, do it in one transaction-ish flow (insert empty images, upload, update).
-- On delete record: list folder, remove all files, then delete row.
-- On image remove in edit: delete from storage, update row.
+- Modal: read-only summary card (photo, name, cédula, teléfono, ocupación, employer, credit auth badge). Only `message` editable.
+- If profile missing or `photos` empty → block with alert linking to `/tenant/profile`.
+- `addRentalRequest` in store: fetch `tenant_profiles`, validate, snapshot all profile fields into insert.
 
-## Risks & mitigations
+## Phase 6 — Owner rental request view
 
-- **Async breakage**: a handful of routes assume sync returns (e.g. `addBuilding` returns id, navigate immediately). I'll `await` those (3-4 spots, max).
-- **RLS**: I trust the user that policies are in place. If a query fails, I'll surface the Postgres error via toast — not silently swallow.
-- **Realtime / multi-user**: out of scope. Hydrate on login + refetch after mutations is enough.
-- **`mock-data.ts` removal**: I'll keep the file but export empty arrays to avoid a cascade of broken imports during the migration.
+Update owner requests page: show photo gallery, full tenant profile fields (employer, work cert link, credit auth badge, bio, recommendations), message, approve/reject.
 
-## Out of scope
+## Phase 7 — Public landing additions (`src/routes/index.tsx`)
 
-- Realtime subscriptions.
-- Migrating receipts in `payments` to Supabase Storage (separate scope — currently base64; I'll leave as-is unless you say otherwise).
-- Redesigning any form.
+Append three sections (preserve existing):
+- **Servicios**: dark banner header + 3 cards (Propietarios, Inquilinos, Búsqueda) with image+title+bullets, then testimonial banner.
+- **Sobre Nosotros**: dark hero with curved divider, 2-col Misión/Visión + red CTA.
+- **FAQ**: accordion with 3 questions.
+
+Update PublicNavbar: white bg, centered links (Inicio, Propiedades, Servicios, Sobre nosotros, ¿Tienes dudas?), right side search/phone/lang/Iniciar sesión/Contáctanos (dark filled).
+
+## Phase 8 — Messaging
+
+- New routes:
+  - `src/routes/tenant/messages.tsx`: list sent messages, "Nueva solicitud" form (type, subject, body) → resolves owner via active contract → insert into `messages`.
+  - `src/routes/owner/messages.tsx`: inbox grouped by sender, expand to read (marks read), reply via `mailto:`.
+- Add "Mensajes" link with unread badge to tenant + owner sidebars in `DashboardShell`.
+
+## Phase 9 — Email notifications
+
+- Create `supabase/functions/send-notification/index.ts` using Resend (`RESEND_API_KEY` secret). Single function with `type` switch: rental_request, request_update, amenity_booking, booking_update, new_message, new_payment.
+- Invoke from store actions inside try/catch — never blocking.
+- Ask user to provide `RESEND_API_KEY` via secrets tool before deploying.
+
+## Constraints
+
+- No rewrites of working code (buildings/units/payments/amenities/meters/contracts).
+- Keep ImageUploader component as-is.
+- Use existing shadcn components and design tokens — add red accent token if missing.
+- TanStack Router file structure preserved.
 
 ## Verification
 
-After build, I'll smoke-test by:
-1. Loading the preview and checking console for errors.
-2. Confirming login flow against Supabase.
-3. Creating one building with an image upload to verify Storage path + URL persistence.
+After each phase: check build output. After Phase 1: confirm migrations applied. After Phase 5+8: smoke test request submission + message flow in preview. After Phase 9: trigger one notification and check function logs.
 
-If any step fails I'll iterate before declaring done.
+## Open question
+
+Phase 9 requires a Resend API key. Once you approve the plan I'll request it via the secrets tool before deploying the function. Confirm you want Resend (vs Lovable's built-in email infra, which I can use instead with zero setup).

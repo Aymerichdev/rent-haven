@@ -218,6 +218,64 @@ export type Database = {
           },
         ]
       }
+      messages: {
+        Row: {
+          body: string
+          contract_id: string | null
+          created_at: string | null
+          id: string
+          read: boolean | null
+          receiver_id: string | null
+          sender_id: string | null
+          subject: string
+          type: string | null
+        }
+        Insert: {
+          body: string
+          contract_id?: string | null
+          created_at?: string | null
+          id?: string
+          read?: boolean | null
+          receiver_id?: string | null
+          sender_id?: string | null
+          subject: string
+          type?: string | null
+        }
+        Update: {
+          body?: string
+          contract_id?: string | null
+          created_at?: string | null
+          id?: string
+          read?: boolean | null
+          receiver_id?: string | null
+          sender_id?: string | null
+          subject?: string
+          type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_receiver_id_fkey"
+            columns: ["receiver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       meters: {
         Row: {
           date: string
@@ -246,6 +304,47 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      owner_profiles: {
+        Row: {
+          bio: string | null
+          company_name: string | null
+          created_at: string
+          id: string
+          phone: string
+          profile_photo_url: string | null
+          tax_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          bio?: string | null
+          company_name?: string | null
+          created_at?: string
+          id: string
+          phone?: string
+          profile_photo_url?: string | null
+          tax_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          bio?: string | null
+          company_name?: string | null
+          created_at?: string
+          id?: string
+          phone?: string
+          profile_photo_url?: string | null
+          tax_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "owner_profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -343,127 +442,69 @@ export type Database = {
         }
         Relationships: []
       }
-      tenant_profiles: {
-        Row: {
-          bio: string | null
-          created_at: string
-          id: string
-          national_id: string
-          occupation: string
-          phone: string
-          profile_photo_url: string
-          recommendations: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          bio?: string | null
-          created_at?: string
-          id: string
-          national_id: string
-          occupation: string
-          phone: string
-          profile_photo_url: string
-          recommendations?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          bio?: string | null
-          created_at?: string
-          id?: string
-          national_id?: string
-          occupation?: string
-          phone?: string
-          profile_photo_url?: string
-          recommendations?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tenant_profiles_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      owner_profiles: {
-        Row: {
-          bio: string | null
-          company_name: string | null
-          created_at: string
-          id: string
-          phone: string
-          profile_photo_url: string | null
-          tax_id: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          bio?: string | null
-          company_name?: string | null
-          created_at?: string
-          id: string
-          phone: string
-          profile_photo_url?: string | null
-          tax_id?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          bio?: string | null
-          company_name?: string | null
-          created_at?: string
-          id?: string
-          phone?: string
-          profile_photo_url?: string | null
-          tax_id?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "owner_profiles_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       rental_requests: {
         Row: {
+          bio: string | null
           created_at: string
+          credit_auth: boolean | null
+          employer: string | null
           id: string
           message: string
+          national_id: string | null
+          occupation: string | null
           owner_id: string
           owner_response: string | null
           phone: string
+          photos: string[] | null
+          profile_photo_url: string | null
+          recommendations: string | null
           status: string
           tenant_id: string
           unit_id: string
           updated_at: string | null
+          work_certificate_url: string | null
         }
         Insert: {
+          bio?: string | null
           created_at?: string
+          credit_auth?: boolean | null
+          employer?: string | null
           id?: string
           message?: string
+          national_id?: string | null
+          occupation?: string | null
           owner_id: string
           owner_response?: string | null
           phone?: string
+          photos?: string[] | null
+          profile_photo_url?: string | null
+          recommendations?: string | null
           status?: string
           tenant_id: string
           unit_id: string
           updated_at?: string | null
+          work_certificate_url?: string | null
         }
         Update: {
+          bio?: string | null
           created_at?: string
+          credit_auth?: boolean | null
+          employer?: string | null
           id?: string
           message?: string
+          national_id?: string | null
+          occupation?: string | null
           owner_id?: string
           owner_response?: string | null
           phone?: string
+          photos?: string[] | null
+          profile_photo_url?: string | null
+          recommendations?: string | null
           status?: string
           tenant_id?: string
           unit_id?: string
           updated_at?: string | null
+          work_certificate_url?: string | null
         }
         Relationships: [
           {
@@ -489,28 +530,61 @@ export type Database = {
           },
         ]
       }
-      unit_clicks: {
+      tenant_profiles: {
         Row: {
+          bio: string | null
           created_at: string
+          credit_auth: boolean | null
+          credit_auth_date: string | null
+          employer: string | null
           id: string
-          unit_id: string
+          national_id: string
+          occupation: string
+          phone: string
+          photos: string[] | null
+          profile_photo_url: string | null
+          recommendations: string | null
+          updated_at: string | null
+          work_certificate_url: string | null
         }
         Insert: {
+          bio?: string | null
           created_at?: string
-          id?: string
-          unit_id: string
+          credit_auth?: boolean | null
+          credit_auth_date?: string | null
+          employer?: string | null
+          id: string
+          national_id?: string
+          occupation?: string
+          phone?: string
+          photos?: string[] | null
+          profile_photo_url?: string | null
+          recommendations?: string | null
+          updated_at?: string | null
+          work_certificate_url?: string | null
         }
         Update: {
+          bio?: string | null
           created_at?: string
+          credit_auth?: boolean | null
+          credit_auth_date?: string | null
+          employer?: string | null
           id?: string
-          unit_id?: string
+          national_id?: string
+          occupation?: string
+          phone?: string
+          photos?: string[] | null
+          profile_photo_url?: string | null
+          recommendations?: string | null
+          updated_at?: string | null
+          work_certificate_url?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "unit_clicks_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
-            referencedRelation: "units"
+            foreignKeyName: "tenant_profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -602,10 +676,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      current_role: {
-        Args: never
-        Returns: Database["public"]["Enums"]["app_role"]
-      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
