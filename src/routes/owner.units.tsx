@@ -627,6 +627,22 @@ function Page() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <AlertDialog open={!!paymentPrompt} onOpenChange={(o) => !o && setPaymentPrompt(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Generar pago del mes actual</AlertDialogTitle>
+            <AlertDialogDescription>
+              ¿Deseas generar el pago del mes actual ({monthLabel(new Date())})?
+              {paymentPrompt ? ` El monto será de €${paymentPrompt.monthlyRent}.` : ""}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setPaymentPrompt(null)}>No, después</AlertDialogCancel>
+            <AlertDialogAction onClick={generateCurrentPayment}>Sí, generar pago</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
