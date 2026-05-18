@@ -612,6 +612,18 @@ function Page() {
                           className="min-h-[110px]"
                         />
                       </div>
+
+                      {createdUser ? (
+                        <div className="space-y-2 sm:col-span-2">
+                          <Label>Orden patronal / Constancia de trabajo (opcional)</Label>
+                          <ImageUploader
+                            folder={"profiles/" + createdUser.id + "/employer"}
+                            label="Orden patronal / Constancia de trabajo (opcional)"
+                            value={tenantForm.employer}
+                            onChange={(url) => setTenantForm({ ...tenantForm, employer: url ?? "" })}
+                          />
+                        </div>
+                      ) : null}
                     </div>
                   ) : (
                     <div className="grid gap-4 sm:grid-cols-2">
