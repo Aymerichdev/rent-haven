@@ -5,8 +5,18 @@ import { PublicNavbar, Footer } from "@/components/site/PublicNavbar";
 import { UnitCard } from "@/components/site/UnitCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import hero from "@/assets/hero.jpg";
-import { Search, MapPin, Sparkles, ShieldCheck, Calendar } from "lucide-react";
+import prop1 from "@/assets/prop1.jpg";
+import prop2 from "@/assets/prop2.jpg";
+import prop3 from "@/assets/prop3.jpg";
+import prop4 from "@/assets/prop4.jpg";
+import { Search, MapPin, Sparkles, ShieldCheck, Calendar, Quote, Check } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
