@@ -94,20 +94,45 @@ function Page() {
                       />
                     )}
                     <div className="min-w-0 flex-1">
-                      {r.profilePhotoUrl ? (
-                        <img src={r.profilePhotoUrl} alt="" className="mb-2 h-12 w-12 rounded-full object-cover" />
-                      ) : null}
-                      <div className="font-medium">{u?.title}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {tenant?.name} · {r.createdAt}
+                      <div className="flex items-center gap-3">
+                        {r.profilePhotoUrl || (r.photos && r.photos[0]) ? (
+                          <img
+                            src={r.profilePhotoUrl || r.photos?.[0]}
+                            alt=""
+                            className="h-14 w-14 rounded-full object-cover ring-2 ring-border"
+                          />
+                        ) : null}
+                        <div className="min-w-0">
+                          <div className="font-medium">{u?.title}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {tenant?.name} · {r.createdAt}
+                          </div>
+                        </div>
                       </div>
-                      <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+                      {r.photos && r.photos.length > 1 && (
+                        <div className="mt-2 flex gap-1 overflow-x-auto">
+                          {r.photos.slice(0, 6).map((p, i) => (
+                            <img
+                              key={i}
+                              src={p}
+                              alt=""
+                              className="h-14 w-14 shrink-0 rounded-md object-cover"
+                            />
+                          ))}
+                        </div>
+                      )}
+                      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs">
                         <span className="inline-flex items-center gap-1 text-muted-foreground">
                           <Phone className="h-3 w-3" />
                           <a href={`tel:${r.phone}`} className="font-medium text-foreground hover:text-primary">
                             {r.phone}
                           </a>
                         </span>
+                        {r.creditAuth && (
+                          <Badge variant="outline" className="border-success/30 bg-success/10 text-success">
+                            ✓ Autoriza estudio crediticio
+                          </Badge>
+                        )}
                       </div>
                       <p className="mt-2 line-clamp-2 rounded-md bg-secondary/50 p-2 text-sm">
                         {r.message}
@@ -115,6 +140,15 @@ function Page() {
                       <div className="mt-2 space-y-1 text-xs text-muted-foreground">
                         {r.nationalId ? <p><span className="font-medium text-foreground">Cédula:</span> {r.nationalId}</p> : null}
                         {r.occupation ? <p><span className="font-medium text-foreground">Ocupación:</span> {r.occupation}</p> : null}
+                        {r.employer ? <p><span className="font-medium text-foreground">Empresa:</span> {r.employer}</p> : null}
+                        {r.workCertificateUrl ? (
+                          <p>
+                            <span className="font-medium text-foreground">Certificado laboral:</span>{" "}
+                            <a href={r.workCertificateUrl} target="_blank" rel="noreferrer" className="text-primary underline">
+                              Ver documento
+                            </a>
+                          </p>
+                        ) : null}
                         {r.bio ? <p><span className="font-medium text-foreground">Bio:</span> {r.bio}</p> : null}
                         {r.recommendations ? <p><span className="font-medium text-foreground">Recomendaciones:</span> {r.recommendations}</p> : null}
                       </div>
