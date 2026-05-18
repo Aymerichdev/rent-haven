@@ -108,7 +108,8 @@ function Page() {
     if (!paymentPrompt) return;
     const now = new Date();
     const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-    const { supabase } = await import("@/integrations/supabase/client");
+    const { supabase: _sb } = await import("@/integrations/supabase/client");
+    void _sb;
     const { error } = await supabase.from("payments").insert({
       contract_id: paymentPrompt.contractId,
       tenant_id: paymentPrompt.tenantId ?? null,
