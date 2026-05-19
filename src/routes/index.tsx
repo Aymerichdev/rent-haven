@@ -193,7 +193,7 @@ function Index() {
                 <ul className="mt-4 space-y-2">
                   {card.items.map((it) => (
                     <li key={it} className="flex items-start gap-2 text-sm text-neutral-700">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#2563eb]" />
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#0096fa]" />
                       <span>{it}</span>
                     </li>
                   ))}
@@ -207,7 +207,7 @@ function Index() {
           <img src={prop4} alt="" className="absolute inset-0 h-full w-full object-cover" />
           <div className="absolute inset-0 bg-neutral-900/70" />
           <div className="relative mx-auto flex h-full max-w-4xl flex-col items-center justify-center px-6 text-center text-white">
-            <Quote className="h-10 w-10 text-[#2563eb]" />
+            <Quote className="h-10 w-10 text-[#0096fa]" />
             <p className="mt-4 font-display text-xl leading-relaxed sm:text-2xl">
               "Alquilar con BR Internacional ha sido una experiencia increíble. Su atención al
               cliente y la calidad de sus propiedades son excepcionales."
@@ -261,7 +261,7 @@ function Index() {
                 nuestra cercanía, transparencia y uso inteligente de la tecnología.
               </p>
             </div>
-            <Button asChild className="rounded-full bg-[#2563eb] px-6 text-white hover:bg-[#1d4ed8]">
+            <Button asChild className="rounded-full bg-[#0096fa] px-6 text-white hover:bg-[#0077c8]">
               <Link to="/units">Más información sobre nuestras propiedades</Link>
             </Button>
           </div>
