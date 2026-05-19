@@ -26,18 +26,18 @@ export function PublicNavbar() {
           ? "/tenant"
           : "/login";
 
-  const linkBase = "px-3 py-2 text-sm font-medium text-neutral-700 hover:text-[#dc2626] transition-colors";
-  const linkActive = "text-[#dc2626]";
+  const linkBase = "px-3 py-2 text-sm font-medium text-neutral-700 hover:text-[#2563eb] transition-colors";
+  const linkActive = "text-[#2563eb]";
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-neutral-200 bg-white">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#dc2626] text-white">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#2563eb] text-white">
             <Home className="h-5 w-5" />
           </div>
           <span className="font-display text-lg font-bold tracking-tight text-neutral-900">
-            BR<span className="text-[#dc2626]"> Internacional</span>
+            BR<span className="text-[#2563eb]"> Internacional</span>
           </span>
         </Link>
 
@@ -60,7 +60,7 @@ export function PublicNavbar() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <button aria-label="Buscar" className="hidden text-neutral-700 hover:text-[#dc2626] md:inline-flex">
+          <button aria-label="Buscar" className="hidden text-neutral-700 hover:text-[#2563eb] md:inline-flex">
             <Search className="h-4 w-4" />
           </button>
           <span className="hidden items-center gap-1 text-xs font-medium text-neutral-700 lg:inline-flex">
@@ -70,7 +70,7 @@ export function PublicNavbar() {
 
           {!user ? (
             <>
-              <Link to="/login" className="text-sm font-medium text-neutral-800 hover:text-[#dc2626]">
+              <Link to="/login" className="text-sm font-medium text-neutral-800 hover:text-[#2563eb]">
                 Iniciar sesión
               </Link>
               <Button asChild className="rounded-full bg-neutral-900 text-white hover:bg-neutral-800">
@@ -80,9 +80,9 @@ export function PublicNavbar() {
           ) : (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-2 py-1.5 hover:border-[#dc2626]">
+                <button className="flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-2 py-1.5 hover:border-[#2563eb]">
                   <Avatar className="h-7 w-7">
-                    <AvatarFallback className="bg-[#dc2626] text-xs text-white">
+                    <AvatarFallback className="bg-[#2563eb] text-xs text-white">
                       {user.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
                     </AvatarFallback>
                   </Avatar>
@@ -129,7 +129,7 @@ export function Footer() {
       <div className="mx-auto grid max-w-7xl gap-8 px-6 py-12 md:grid-cols-4">
         <div>
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#dc2626] text-white">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2563eb] text-white">
               <Home className="h-4 w-4" />
             </div>
             <span className="font-display font-bold text-white">BR Internacional</span>
