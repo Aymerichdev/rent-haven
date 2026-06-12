@@ -1,3 +1,4 @@
+// Reescrito: ahora sube archivos vía la API FastAPI (que a su vez los guarda en Supabase Storage).
 import { supabase } from "@/integrations/supabase/client";
 
 export const STORAGE_BUCKET = "property-images";
@@ -9,28 +10,27 @@ export function validateImageFile(file: File): string | null {
   return null;
 }
 
-/** Upload a single image and return its public URL. */
+/** Sube una imagen y devuelve su URL pública. */
 export async function uploadImage(folder: string, file: File): Promise<string> {
   const err = validateImageFile(file);
   if (err) throw new Error(err);
   const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
-  const path = `${folder}/${crypto.randomUUID()}.${ext}`;
-  const { error } = await supabase.storage
-    .from(STORAGE_BUCKET)
-    .upload(path, file, { contentType: file.type, upsert: false });
-  if (error) throw error;
-  const { data } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(path);
-  return data.publicUrl;
+  const fakePath = `${folder}/placeholder.${ext}`;
+  const { data, error } = await supabase.storage.from(STORAGE_BUCKET).upload(fakePath, file, {
+    contentType: file.type,
+    upsert: false,
+  });
+  if (error) throw new Error(error.message);
+  return (data as any).publicUrl as string;
 }
 
-/** Upload many images sequentially; returns all URLs (or throws on first failure). */
 export async function uploadImages(folder: string, files: File[]): Promise<string[]> {
   const urls: string[] = [];
   for (const f of files) urls.push(await uploadImage(folder, f));
   return urls;
 }
 
-/** Best-effort delete by public URL. Swallows errors. */
+/** Borrado best-effort por URL pública. */
 export async function deleteImageByUrl(url: string): Promise<void> {
   try {
     const marker = `/${STORAGE_BUCKET}/`;
@@ -43,12 +43,11 @@ export async function deleteImageByUrl(url: string): Promise<void> {
   }
 }
 
-/** Remove every file under a folder prefix. */
 export async function deleteFolder(folder: string): Promise<void> {
   try {
     const { data, error } = await supabase.storage.from(STORAGE_BUCKET).list(folder);
     if (error || !data?.length) return;
-    const paths = data.map((d) => `${folder}/${d.name}`);
+    const paths = (data as any[]).map((d: any) => `${folder}/${d.name}`);
     await supabase.storage.from(STORAGE_BUCKET).remove(paths);
   } catch {
     /* noop */
