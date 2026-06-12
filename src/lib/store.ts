@@ -197,7 +197,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
         .maybeSingle();
       if (profile) set({ currentUser: rowToUser(profile) });
     }
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_e, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_e: string, session: any) => {
       if (_e === "TOKEN_REFRESHED") {
         return;
       }
@@ -271,7 +271,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
       const users = (profilesRes.data ?? []).map(rowToUser);
       const amenities = (amenitiesRes.data ?? []).map(rowToAmenity);
       const buildings = recomputeBuildingAmenityIds(
-        (buildingsRes.data ?? []).map((b) => rowToBuilding(b)),
+        (buildingsRes.data ?? []).map((b: any) => rowToBuilding(b)),
         amenities,
       );
 
