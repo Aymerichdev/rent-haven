@@ -265,6 +265,17 @@ function Page() {
                     </div>
                   </>
                 )}
+
+                <div className="mt-6">
+                  <Button asChild variant="outline" size="sm">
+                    <Link
+                      to="/buildings/$buildingId"
+                      params={{ buildingId: building.id }}
+                    >
+                      Ver edificio completo →
+                    </Link>
+                  </Button>
+                </div>
               </section>
             )}
           </div>
