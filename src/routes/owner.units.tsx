@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -31,7 +32,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Trash2, Pencil, Building2, KeyRound, DoorOpen, Eye } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  Pencil,
+  Building2,
+  KeyRound,
+  DoorOpen,
+  Eye,
+  UserRound,
+  CalendarRange,
+  Wallet,
+  FileImage,
+  Loader2,
+  AlertCircle,
+} from "lucide-react";
 import type { Unit } from "@/lib/types";
 import { toast } from "sonner";
 import { ImageUploader } from "@/components/site/ImageUploader";
