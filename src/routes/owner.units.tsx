@@ -61,6 +61,7 @@ function Page() {
   const [rentMonthly, setRentMonthly] = useState<number>(0);
   const [rentDeposit, setRentDeposit] = useState<number>(0);
   const [rentPhoto, setRentPhoto] = useState<string>("");
+  const [rentSubmitting, setRentSubmitting] = useState(false);
   const [releaseUnit, setReleaseUnit] = useState<Unit | null>(null);
   const [paymentPrompt, setPaymentPrompt] = useState<{
     contractId: string;
@@ -78,26 +79,38 @@ function Page() {
     setRentPhoto("");
   };
 
+  const rentDateError =
+    rentStart && rentEnd && rentEnd <= rentStart
+      ? "La fecha de fin debe ser posterior al inicio"
+      : "";
+  const rentValid =
+    !!rentUnit && !!rentStart && !!rentEnd && !rentDateError && rentMonthly > 0;
+
   const confirmRent = async () => {
     if (!rentUnit) return;
     if (!rentStart || !rentEnd) return toast.error("Inicio y fin son obligatorios");
     if (rentEnd <= rentStart) return toast.error("La fecha de fin debe ser posterior al inicio");
-    const created = await markRented(rentUnit.id, {
-      tenantId: rentTenant || undefined,
-      startDate: rentStart,
-      endDate: rentEnd,
-      monthlyRent: rentMonthly,
-      deposit: rentDeposit,
-      contractPhotoUrl: rentPhoto || undefined,
-    });
-    toast.success("Unidad marcada como alquilada");
-    setRentUnit(null);
-    if (created) {
-      setPaymentPrompt({
-        contractId: created.id,
-        tenantId: created.tenantId,
-        monthlyRent: created.monthlyRent,
+    setRentSubmitting(true);
+    try {
+      const created = await markRented(rentUnit.id, {
+        tenantId: rentTenant || undefined,
+        startDate: rentStart,
+        endDate: rentEnd,
+        monthlyRent: rentMonthly,
+        deposit: rentDeposit,
+        contractPhotoUrl: rentPhoto || undefined,
       });
+      toast.success("Unidad marcada como alquilada");
+      setRentUnit(null);
+      if (created) {
+        setPaymentPrompt({
+          contractId: created.id,
+          tenantId: created.tenantId,
+          monthlyRent: created.monthlyRent,
+        });
+      }
+    } finally {
+      setRentSubmitting(false);
     }
   };
 
