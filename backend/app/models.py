@@ -42,6 +42,7 @@ class TenantProfile(Base):
     employer = Column(String, nullable=True)
     work_certificate_url = Column(String, nullable=True)
     credit_auth = Column(Boolean, nullable=True, default=False)
+    credit_auth_date = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
@@ -52,9 +53,10 @@ class OwnerProfile(Base):
     user_id = Column(UUID(as_uuid=False), ForeignKey("profiles.id", ondelete="CASCADE"), unique=True, nullable=False, index=True)
     phone = Column(String, nullable=True)
     national_id = Column(String, nullable=True)
-    company = Column(String, nullable=True)
+    company_name = Column(String, nullable=True)
+    tax_id = Column(String, nullable=True)
     bio = Column(Text, nullable=True)
-    photo_url = Column(String, nullable=True)
+    profile_photo_url = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
@@ -94,6 +96,7 @@ class Unit(Base):
     featured = Column(Boolean, nullable=False, default=False)
     address_override = Column(String, nullable=True)
     city_override = Column(String, nullable=True)
+    click_count = Column(Integer, nullable=False, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 

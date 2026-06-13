@@ -103,29 +103,6 @@ function Page() {
               Entrar
             </Button>
           </form>
-
-          <div className="mt-8 rounded-xl border border-dashed border-border p-4">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Cuentas demo
-            </p>
-            <div className="mt-2 space-y-1 text-xs">
-              {[
-                ["admin@estate.com", "admin123", "Admin"],
-                ["owner@estate.com", "owner123", "Propietario"],
-                ["tenant@estate.com", "tenant123", "Inquilino"],
-              ].map(([e, p, label]) => (
-                <button
-                  key={e}
-                  type="button"
-                  onClick={() => quick(e, p)}
-                  className="flex w-full items-center justify-between rounded-md px-2 py-1 text-left hover:bg-secondary"
-                >
-                  <span className="font-medium">{label}</span>
-                  <span className="text-muted-foreground">{e}</span>
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </div>

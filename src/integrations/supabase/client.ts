@@ -9,7 +9,7 @@
 //                  onAuthStateChange, updateUser, resetPasswordForEmail}
 //   supabase.storage.from(bucket).{upload, remove, list, getPublicUrl}
 
-const API_URL =
+export const API_URL =
   (typeof import.meta !== "undefined" && (import.meta as any).env?.VITE_API_URL) ||
   (typeof process !== "undefined" && (process as any).env?.VITE_API_URL) ||
   "http://localhost:8000";

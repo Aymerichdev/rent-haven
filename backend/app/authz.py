@@ -95,10 +95,10 @@ def can_write(table: str, payload: dict, user: Profile, existing=None) -> tuple[
         target = (existing.id if existing else payload.get("id"))
         return (target == pid), "Solo puedes editar tu propio perfil"
     if table == "tenant_profiles":
-        target = (existing.user_id if existing else payload.get("user_id"))
+        target = (existing.user_id if existing else payload.get("user_id") or payload.get("id"))
         return (role == "tenant" and target == pid), "Solo el inquilino dueño puede editar"
     if table == "owner_profiles":
-        target = (existing.user_id if existing else payload.get("user_id"))
+        target = (existing.user_id if existing else payload.get("user_id") or payload.get("id"))
         return (role == "owner" and target == pid), "Solo el propietario dueño puede editar"
     if table in ("buildings", "units", "amenities", "meters", "contracts"):
         target = (existing.owner_id if existing and hasattr(existing, "owner_id")

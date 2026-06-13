@@ -9,7 +9,7 @@ Supports the subset used by the frontend:
 - DELETE /rest/{table}?col=eq.value
 """
 from typing import Any, Optional
-from fastapi import APIRouter, Depends, HTTPException, Request, Header
+from fastapi import APIRouter, Depends, HTTPException, Request, Header, Body
 from sqlalchemy import or_, and_, inspect as sa_inspect
 from sqlalchemy.orm import Session
 from ..database import get_db
@@ -19,6 +19,9 @@ from ..authz import can_read, can_write
 
 router = APIRouter(prefix="/rest", tags=["data"])
 
+# Tablas que usan user_id como FK al usuario pero el frontend les llama "id"
+_USER_ID_TABLES = {"tenant_profiles", "owner_profiles"}
+
 
 def _model(table: str):
     if table not in TABLES:
@@ -26,21 +29,21 @@ def _model(table: str):
     return TABLES[table]
 
 
+def _remap_col(table: str, col: str) -> str:
+    """Remap column names for tables that use user_id instead of id."""
+    if table in _USER_ID_TABLES and col == "id":
+        return "user_id"
+    return col
+
+
 def _row_to_dict(row) -> dict:
     if row is None:
         return None
-    return {c.key: getattr(row, c.key) for c in sa_inspect(row).mapper.column_attrs}
-
-
-def _parse_op(model, expr: str):
-    """Parse 'eq.value' / 'in.(a,b)' / 'neq.x' / 'is.null' / 'gt.10' style."""
-    if "." not in expr:
-        return None
-    op, _, val = expr.partition(".")
-    op = op.lower()
-    if op == "eq":
-        return val
-    return ("__op__", op, val)
+    d = {c.key: getattr(row, c.key) for c in sa_inspect(row).mapper.column_attrs}
+    # Expose user_id as "id" so the frontend finds the record
+    if hasattr(row, '__tablename__') and row.__tablename__ in _USER_ID_TABLES:
+        d["id"] = d.get("user_id")
+    return d
 
 
 def _apply_filter(q, model, column: str, expr: str):
@@ -134,6 +137,17 @@ def _apply_order(q, model, expr: str):
     return q
 
 
+@router.post("/units/{unit_id}/click")
+def increment_unit_click(unit_id: str, db: Session = Depends(get_db)):
+    """Endpoint público: incrementa el contador de clicks de una unidad."""
+    unit = db.query(TABLES["units"]).filter(TABLES["units"].id == unit_id).first()
+    if unit is None:
+        raise HTTPException(404, "Unidad no encontrada")
+    unit.click_count = (unit.click_count or 0) + 1
+    db.commit()
+    return {"click_count": unit.click_count}
+
+
 @router.get("/{table}")
 def list_rows(
     table: str,
@@ -149,7 +163,8 @@ def list_rows(
     for key, value in request.query_params.multi_items():
         if key in ("select", "limit", "offset", "order", "or"):
             continue
-        q = _apply_filter(q, model, key, value)
+        mapped_key = _remap_col(table, key)
+        q = _apply_filter(q, model, mapped_key, value)
 
     or_param = request.query_params.get("or")
     if or_param:
@@ -186,8 +201,8 @@ def list_rows(
 @router.post("/{table}")
 def insert_rows(
     table: str,
-    payload: Any,
-    request: Request,
+    payload: Any = Body(...),
+    request: Request = None,
     db: Session = Depends(get_db),
     user: Profile = Depends(get_current_user),
     prefer: str = Header(default=""),
@@ -200,14 +215,16 @@ def insert_rows(
     for r in rows:
         if not isinstance(r, dict):
             raise HTTPException(400, "Cuerpo debe ser objeto o lista de objetos")
+        # Remap id → user_id for profile tables
+        if table in _USER_ID_TABLES and "id" in r and "user_id" not in r:
+            r["user_id"] = r.pop("id")
 
         if upsert:
-            # Find conflict by primary key or unique columns commonly used as conflict targets.
             existing = None
-            if "id" in r and r["id"]:
-                existing = db.query(model).filter(model.id == r["id"]).first()
-            if not existing and "user_id" in r and hasattr(model, "user_id"):
+            if "user_id" in r and hasattr(model, "user_id"):
                 existing = db.query(model).filter(model.user_id == r["user_id"]).first()
+            if not existing and "id" in r and r["id"]:
+                existing = db.query(model).filter(model.id == r["id"]).first()
             if existing:
                 ok, msg = can_write(table, r, user, existing=existing)
                 if not ok:
@@ -235,10 +252,11 @@ def insert_rows(
 @router.patch("/{table}")
 def update_rows(
     table: str,
-    payload: dict,
-    request: Request,
+    payload: Any = Body(...),
+    request: Request = None,
     db: Session = Depends(get_db),
     user: Profile = Depends(get_current_user),
+    prefer: str = Header(default=""),
 ):
     model = _model(table)
     q = db.query(model)
@@ -246,12 +264,16 @@ def update_rows(
     for key, value in request.query_params.multi_items():
         if key in ("select", "limit", "order"):
             continue
-        q = _apply_filter(q, model, key, value)
+        mapped_key = _remap_col(table, key)
+        q = _apply_filter(q, model, mapped_key, value)
         has_filter = True
     if not has_filter:
         raise HTTPException(400, "PATCH requiere al menos un filtro")
-    # also restrict to rows the user can read (so they can't update someone else's by guessing id)
     q = can_read(table, q, user)
+
+    # Remap id → user_id in payload too
+    if table in _USER_ID_TABLES and isinstance(payload, dict) and "id" in payload and "user_id" not in payload:
+        payload["user_id"] = payload.pop("id")
 
     updated = []
     for existing in q.all():
@@ -277,7 +299,8 @@ def delete_rows(
     q = db.query(model)
     has_filter = False
     for key, value in request.query_params.multi_items():
-        q = _apply_filter(q, model, key, value)
+        mapped_key = _remap_col(table, key)
+        q = _apply_filter(q, model, mapped_key, value)
         has_filter = True
     if not has_filter:
         raise HTTPException(400, "DELETE requiere al menos un filtro")

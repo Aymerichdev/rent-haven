@@ -31,7 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Trash2, Pencil, Building2, KeyRound, DoorOpen } from "lucide-react";
+import { Plus, Trash2, Pencil, Building2, KeyRound, DoorOpen, Eye } from "lucide-react";
 import type { Unit } from "@/lib/types";
 import { toast } from "sonner";
 import { ImageUploader } from "@/components/site/ImageUploader";
@@ -425,6 +425,7 @@ function Page() {
               <th className="px-4 py-3">Edificio</th>
               <th className="px-4 py-3">Habs</th>
               <th className="px-4 py-3">Renta</th>
+              <th className="px-4 py-3">Vistas</th>
               <th className="px-4 py-3">Estado</th>
               <th className="px-4 py-3"></th>
             </tr>
@@ -458,6 +459,11 @@ function Page() {
                     {u.bedrooms}h · {u.bathrooms}b · {u.area}m²
                   </td>
                   <td className="px-4 py-3 font-medium">€{u.rent}</td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    <span className="inline-flex items-center gap-1">
+                      <Eye className="h-3.5 w-3.5" /> {u.clickCount ?? 0}
+                    </span>
+                  </td>
                   <td className="px-4 py-3">
                     <Select
                       value={u.status}

@@ -78,6 +78,12 @@ function Page() {
   const building = buildings.find((b) => b.id === unit?.buildingId);
   const amenities = allAmenities.filter((a) => a.buildingId === building?.id);
 
+  const incrementUnitClicks = useAppStore((s) => s.incrementUnitClicks);
+  useEffect(() => {
+    if (unitId) incrementUnitClicks(unitId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [unitId]);
+
   if (!unit) {
     return (
       <div className="min-h-screen">

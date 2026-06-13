@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { supabase } from "@/integrations/supabase/client";
+import { API_URL } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 import type {
@@ -100,6 +101,7 @@ interface AppState {
   ) => Promise<{ id: string; tenantId?: string; monthlyRent: number } | null>;
   markUnitAvailable: (unitId: string) => Promise<void>;
   deleteUnit: (id: string) => Promise<void>;
+  incrementUnitClicks: (unitId: string) => Promise<void>;
 
   // amenities
   addAmenity: (a: Omit<Amenity, "id">) => Promise<void>;
@@ -835,6 +837,21 @@ export const useAppStore = create<AppState>()((set, get) => ({
     if (error) return fail("Eliminar unidad", error);
     await deleteFolder(`units/${id}`);
     set((s) => ({ units: s.units.filter((u) => u.id !== id) }));
+  },
+
+  incrementUnitClicks: async (unitId) => {
+    try {
+      const res = await fetch(`${API_URL}/rest/units/${unitId}/click`, { method: "POST" });
+      if (!res.ok) return;
+      const data = await res.json();
+      set((s) => ({
+        units: s.units.map((u) =>
+          u.id === unitId ? { ...u, clickCount: data.click_count ?? (u.clickCount ?? 0) + 1 } : u,
+        ),
+      }));
+    } catch {
+      // No bloquear la navegación si falla el registro del click
+    }
   },
 
   // -------- amenities --------

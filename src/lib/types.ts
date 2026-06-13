@@ -76,6 +76,8 @@ export interface Unit {
   addressOverride?: string;
   /** Sobrescribe (u obliga, si no hay building) la ciudad. */
   cityOverride?: string;
+  /** Cantidad de clicks/vistas recibidas en la página de detalle. */
+  clickCount?: number;
 }
 
 export interface RentalRequest {
