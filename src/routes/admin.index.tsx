@@ -214,7 +214,7 @@ function QuickAction({
       variant="outline"
       className="group h-auto w-full justify-start gap-3 rounded-2xl border-border bg-card p-4 text-left shadow-card hover:border-primary hover:bg-card"
     >
-      <Link to={to}>
+      <Link to={to as "/"}>
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
           {icon}
         </span>
