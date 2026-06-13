@@ -4,7 +4,7 @@ from .config import settings
 from .routers import auth, rest, storage
 
 app = FastAPI(
-    title="EstateHub API",
+    title="BR Internacional API",
     version="1.0.0",
     description="Reemplazo de Supabase Auth + PostgREST. Mantiene Supabase Storage para archivos.",
 )
@@ -26,7 +26,7 @@ app.include_router(storage.router)
 
 @app.get("/")
 def root():
-    return {"name": "EstateHub API", "status": "ok", "docs": "/docs"}
+    return {"name": "BR Internacional API", "status": "ok", "docs": "/docs"}
 
 
 @app.get("/health")
