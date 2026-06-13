@@ -17,9 +17,9 @@ import { Search } from "lucide-react";
 export const Route = createFileRoute("/units/")({
   head: () => ({
     meta: [
-      { title: "Explorar unidades — EstateHub" },
+      { title: "Explorar unidades — BR Internacional" },
       { name: "description", content: "Encuentra apartamentos, casas y estudios en alquiler." },
-      { property: "og:title", content: "Explorar unidades — EstateHub" },
+      { property: "og:title", content: "Explorar unidades — BR Internacional" },
       { property: "og:description", content: "Encuentra tu próximo hogar." },
     ],
   }),

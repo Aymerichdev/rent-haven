@@ -154,7 +154,7 @@ function Page() {
                 <Building2 className="h-3.5 w-3.5" />
                 Forma parte del edificio <span className="font-semibold">{building.name}</span>
                 <Badge variant="outline" className="border-primary/30 text-[10px] uppercase tracking-wider">
-                  Rental
+                  Alquiler
                 </Badge>
               </div>
             )}
@@ -207,7 +207,7 @@ function Page() {
                   <Building2 className="h-5 w-5 text-primary" />
                   <h2 className="font-display text-xl font-bold">Edificio {building.name}</h2>
                   <Badge variant="outline" className="ml-1 border-primary/30 text-[10px] uppercase">
-                    Rental
+                    Alquiler
                   </Badge>
                 </div>
                 <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
@@ -265,6 +265,17 @@ function Page() {
                     </div>
                   </>
                 )}
+
+                <div className="mt-6">
+                  <Button asChild variant="outline" size="sm">
+                    <Link
+                      to="/buildings/$buildingId"
+                      params={{ buildingId: building.id }}
+                    >
+                      Ver edificio completo →
+                    </Link>
+                  </Button>
+                </div>
               </section>
             )}
           </div>

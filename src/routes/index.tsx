@@ -21,13 +21,13 @@ import { Search, MapPin, Sparkles, ShieldCheck, Calendar, Quote, Check } from "l
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "EstateHub — Encuentra tu próximo hogar" },
+      { title: "BR Internacional — Encuentra tu próximo hogar" },
       {
         name: "description",
         content:
           "Plataforma de alquileres con unidades verificadas, contratos digitales y reserva de amenidades.",
       },
-      { property: "og:title", content: "EstateHub — Encuentra tu próximo hogar" },
+      { property: "og:title", content: "BR Internacional — Encuentra tu próximo hogar" },
       {
         property: "og:description",
         content: "Alquileres modernos, simples y confiables.",

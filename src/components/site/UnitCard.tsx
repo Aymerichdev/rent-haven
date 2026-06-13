@@ -44,6 +44,9 @@ export function UnitCard({ unit, building }: Props) {
         <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
           <MapPin className="h-3 w-3" /> {city} · {address}
         </div>
+        {building && (
+          <div className="mt-0.5 text-[11px] font-medium text-primary">{building.name}</div>
+        )}
         <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1">
             <Bed className="h-3.5 w-3.5" /> {unit.bedrooms}

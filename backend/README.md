@@ -1,4 +1,4 @@
-# EstateHub — FastAPI backend
+# BR Internacional — FastAPI backend
 
 Reemplaza Supabase Auth + PostgREST + RLS por un servicio FastAPI propio.
 Mantiene **Supabase Storage** (buckets) y **PostgreSQL** (puede ser el de Supabase u otro).

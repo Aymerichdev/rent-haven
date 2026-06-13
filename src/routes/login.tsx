@@ -8,7 +8,7 @@ import { Home } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({ meta: [{ title: "Entrar — EstateHub" }] }),
+  head: () => ({ meta: [{ title: "Entrar — BR Internacional" }] }),
   component: Page,
 });
 
@@ -42,7 +42,7 @@ function Page() {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-background/20 backdrop-blur">
               <Home className="h-5 w-5" />
             </div>
-            <span className="font-display text-xl font-bold">EstateHub</span>
+            <span className="font-display text-xl font-bold">BR Internacional</span>
           </Link>
           <div>
             <h1 className="font-display text-4xl font-bold leading-tight">
@@ -52,7 +52,7 @@ function Page() {
               Gestiona tus alquileres, pagos y reservas desde un solo lugar.
             </p>
           </div>
-          <p className="text-xs text-primary-foreground/70">© 2025 EstateHub</p>
+          <p className="text-xs text-primary-foreground/70">© 2025 BR Internacional</p>
         </div>
       </div>
 
@@ -62,7 +62,7 @@ function Page() {
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-warm text-primary-foreground">
               <Home className="h-4 w-4" />
             </div>
-            <span className="font-display font-bold">EstateHub</span>
+            <span className="font-display font-bold">BR Internacional</span>
           </Link>
 
           <h2 className="font-display text-2xl font-bold">Entrar</h2>

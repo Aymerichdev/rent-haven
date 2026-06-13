@@ -11,7 +11,7 @@ function Layout() {
   return (
     <RequireRole role="owner">
       <DashboardShell
-        brand="EstateHub"
+        brand="BR Internacional"
         brandTag="Propietario"
         items={[
           { to: "/owner", label: "Resumen", icon: <LayoutDashboard className="h-4 w-4" /> },

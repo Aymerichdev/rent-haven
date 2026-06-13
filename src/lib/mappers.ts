@@ -79,7 +79,7 @@ export const rowToUnit = (r: Tables["units"]["Row"]): Unit => ({
   featured: r.featured,
   addressOverride: r.address_override ?? undefined,
   cityOverride: r.city_override ?? undefined,
-  clickCount: r.click_count ?? 0,
+  clickCount: (r as { click_count?: number }).click_count ?? 0,
 });
 
 export const unitToInsert = (u: Omit<Unit, "id">): Tables["units"]["Insert"] => ({

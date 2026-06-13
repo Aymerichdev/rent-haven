@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -31,7 +32,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Trash2, Pencil, Building2, KeyRound, DoorOpen, Eye } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  Pencil,
+  Building2,
+  KeyRound,
+  DoorOpen,
+  Eye,
+  UserRound,
+  CalendarRange,
+  Wallet,
+  FileImage,
+  Loader2,
+  AlertCircle,
+} from "lucide-react";
 import type { Unit } from "@/lib/types";
 import { toast } from "sonner";
 import { ImageUploader } from "@/components/site/ImageUploader";
@@ -61,6 +76,7 @@ function Page() {
   const [rentMonthly, setRentMonthly] = useState<number>(0);
   const [rentDeposit, setRentDeposit] = useState<number>(0);
   const [rentPhoto, setRentPhoto] = useState<string>("");
+  const [rentSubmitting, setRentSubmitting] = useState(false);
   const [releaseUnit, setReleaseUnit] = useState<Unit | null>(null);
   const [paymentPrompt, setPaymentPrompt] = useState<{
     contractId: string;
@@ -78,26 +94,38 @@ function Page() {
     setRentPhoto("");
   };
 
+  const rentDateError =
+    rentStart && rentEnd && rentEnd <= rentStart
+      ? "La fecha de fin debe ser posterior al inicio"
+      : "";
+  const rentValid =
+    !!rentUnit && !!rentStart && !!rentEnd && !rentDateError && rentMonthly > 0;
+
   const confirmRent = async () => {
     if (!rentUnit) return;
     if (!rentStart || !rentEnd) return toast.error("Inicio y fin son obligatorios");
     if (rentEnd <= rentStart) return toast.error("La fecha de fin debe ser posterior al inicio");
-    const created = await markRented(rentUnit.id, {
-      tenantId: rentTenant || undefined,
-      startDate: rentStart,
-      endDate: rentEnd,
-      monthlyRent: rentMonthly,
-      deposit: rentDeposit,
-      contractPhotoUrl: rentPhoto || undefined,
-    });
-    toast.success("Unidad marcada como alquilada");
-    setRentUnit(null);
-    if (created) {
-      setPaymentPrompt({
-        contractId: created.id,
-        tenantId: created.tenantId,
-        monthlyRent: created.monthlyRent,
+    setRentSubmitting(true);
+    try {
+      const created = await markRented(rentUnit.id, {
+        tenantId: rentTenant || undefined,
+        startDate: rentStart,
+        endDate: rentEnd,
+        monthlyRent: rentMonthly,
+        deposit: rentDeposit,
+        contractPhotoUrl: rentPhoto || undefined,
       });
+      toast.success("Unidad marcada como alquilada");
+      setRentUnit(null);
+      if (created) {
+        setPaymentPrompt({
+          contractId: created.id,
+          tenantId: created.tenantId,
+          monthlyRent: created.monthlyRent,
+        });
+      }
+    } finally {
+      setRentSubmitting(false);
     }
   };
 
@@ -534,15 +562,32 @@ function Page() {
         </Badge>
       </div>
 
-      <Dialog open={!!rentUnit} onOpenChange={(o) => !o && setRentUnit(null)}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Marcar como alquilada · {rentUnit?.title}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-5">
+      <Dialog open={!!rentUnit} onOpenChange={(o) => !o && !rentSubmitting && setRentUnit(null)}>
+        <DialogContent className="max-h-[92vh] overflow-y-auto p-0 sm:max-w-xl">
+          {/* Encabezado destacado */}
+          <div className="rounded-t-lg bg-gradient-warm px-6 py-5 text-white">
+            <DialogHeader className="space-y-1 text-left">
+              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-white/80">
+                <KeyRound className="h-3.5 w-3.5" /> Nuevo alquiler
+              </div>
+              <DialogTitle className="text-xl font-bold text-white">
+                {rentUnit?.title}
+              </DialogTitle>
+              <DialogDescription className="text-sm text-white/85">
+                Unidad #{rentUnit?.number} · Renta sugerida ₡
+                {rentUnit?.rent?.toLocaleString("es-CR")}
+              </DialogDescription>
+            </DialogHeader>
+          </div>
+
+          <div className="space-y-6 px-6 py-5">
+            {/* Inquilino */}
             <section className="space-y-2">
-              <h3 className="font-display text-sm font-bold">Inquilino (opcional)</h3>
-              <Label className="text-xs">Asignar inquilino</Label>
+              <div className="flex items-center gap-2">
+                <UserRound className="h-4 w-4 text-primary" />
+                <h3 className="font-display text-sm font-bold">Inquilino</h3>
+                <span className="text-xs text-muted-foreground">(opcional)</span>
+              </div>
               <Select
                 value={rentTenant || "__none__"}
                 onValueChange={(v) => setRentTenant(v === "__none__" ? "" : v)}
@@ -559,48 +604,81 @@ function Page() {
                   ))}
                 </SelectContent>
               </Select>
+              <p className="text-xs text-muted-foreground">
+                Puedes asignar al inquilino más adelante desde la sección de contratos.
+              </p>
             </section>
 
-            <section className="space-y-3">
-              <h3 className="font-display text-sm font-bold">Contrato</h3>
+            {/* Fechas */}
+            <section className="space-y-3 rounded-xl border border-border bg-secondary/40 p-4">
+              <div className="flex items-center gap-2">
+                <CalendarRange className="h-4 w-4 text-primary" />
+                <h3 className="font-display text-sm font-bold">Vigencia del contrato</h3>
+              </div>
               <div className="grid gap-3 sm:grid-cols-2">
-                <div>
-                  <Label className="text-xs">Inicio del contrato</Label>
+                <div className="space-y-1">
+                  <Label className="text-xs">Inicio *</Label>
                   <Input
                     type="date"
                     value={rentStart}
                     onChange={(e) => setRentStart(e.target.value)}
                   />
                 </div>
-                <div>
-                  <Label className="text-xs">Fin del contrato</Label>
+                <div className="space-y-1">
+                  <Label className="text-xs">Fin *</Label>
                   <Input
                     type="date"
                     value={rentEnd}
                     onChange={(e) => setRentEnd(e.target.value)}
+                    className={rentDateError ? "border-destructive" : ""}
                   />
                 </div>
-                <div>
+              </div>
+              {rentDateError && (
+                <p className="flex items-center gap-1 text-xs text-destructive">
+                  <AlertCircle className="h-3 w-3" /> {rentDateError}
+                </p>
+              )}
+            </section>
+
+            {/* Monto */}
+            <section className="space-y-3 rounded-xl border border-border bg-secondary/40 p-4">
+              <div className="flex items-center gap-2">
+                <Wallet className="h-4 w-4 text-primary" />
+                <h3 className="font-display text-sm font-bold">Montos</h3>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="space-y-1">
                   <Label className="text-xs">Renta mensual (₡)</Label>
                   <Input
                     type="number"
+                    min={0}
                     value={rentMonthly}
                     onChange={(e) => setRentMonthly(Number(e.target.value))}
                   />
                 </div>
-                <div>
+                <div className="space-y-1">
                   <Label className="text-xs">Depósito (₡)</Label>
                   <Input
                     type="number"
+                    min={0}
                     value={rentDeposit}
                     onChange={(e) => setRentDeposit(Number(e.target.value))}
                   />
                 </div>
               </div>
+              <p className="text-xs text-muted-foreground">
+                Por defecto el depósito equivale a dos meses de renta.
+              </p>
             </section>
 
+            {/* Foto contrato */}
             <section className="space-y-2">
-              <h3 className="font-display text-sm font-bold">Foto del contrato (opcional)</h3>
+              <div className="flex items-center gap-2">
+                <FileImage className="h-4 w-4 text-primary" />
+                <h3 className="font-display text-sm font-bold">Foto del contrato</h3>
+                <span className="text-xs text-muted-foreground">(opcional)</span>
+              </div>
               <ImageUploader
                 folder={`contracts/${rentUnit?.id ?? "new"}`}
                 value={rentPhoto || undefined}
@@ -608,16 +686,34 @@ function Page() {
               />
             </section>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setRentUnit(null)}>
+
+          <DialogFooter className="gap-2 border-t border-border bg-secondary/30 px-6 py-4">
+            <Button
+              variant="outline"
+              onClick={() => setRentUnit(null)}
+              disabled={rentSubmitting}
+            >
               Cancelar
             </Button>
-            <Button className="bg-gradient-warm" onClick={confirmRent}>
-              Confirmar alquiler
+            <Button
+              className="bg-gradient-warm"
+              onClick={confirmRent}
+              disabled={!rentValid || rentSubmitting}
+            >
+              {rentSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Guardando…
+                </>
+              ) : (
+                <>
+                  <KeyRound className="mr-2 h-4 w-4" /> Confirmar alquiler
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
 
       <AlertDialog open={!!releaseUnit} onOpenChange={(o) => !o && setReleaseUnit(null)}>
         <AlertDialogContent>
