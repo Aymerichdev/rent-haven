@@ -27,7 +27,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/register")({
-  head: () => ({ meta: [{ title: "Crear cuenta — EstateHub" }] }),
+  head: () => ({ meta: [{ title: "Crear cuenta — BR Internacional" }] }),
   component: Page,
 });
 
@@ -250,7 +250,7 @@ function Page() {
                     </h1>
                     <p className="max-w-md text-sm leading-6 text-muted-foreground sm:text-base">
                       {step === 1
-                        ? "Selecciona cómo usarás EstateHub y crea tu acceso con una experiencia guiada y clara."
+                        ? "Selecciona cómo usarás BR Internacional y crea tu acceso con una experiencia guiada y clara."
                         : roleDetails.summary}
                     </p>
                   </div>
@@ -549,7 +549,7 @@ function Page() {
                     )}
 
                     <p className="text-xs text-muted-foreground">
-                      Las imágenes se guardan en el bucket existente de EstateHub y se usan como avatar del perfil.
+                      Las imágenes se guardan en el bucket existente de BR Internacional y se usan como avatar del perfil.
                     </p>
                   </div>
 
