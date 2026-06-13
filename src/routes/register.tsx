@@ -232,7 +232,7 @@ function Page() {
                     <Home className="h-5 w-5" />
                   </div>
                   <span className="font-display text-lg font-bold tracking-tight">
-                    Estate<span className="text-gradient-warm">Hub</span>
+                    BR <span className="text-gradient-warm">Internacional</span>
                   </span>
                 </Link>
 
@@ -243,14 +243,14 @@ function Page() {
                   <div className="space-y-2">
                     <h1 className="font-display text-3xl font-bold leading-tight sm:text-4xl">
                       {step === 1
-                        ? "Empieza con una cuenta pensada para tu rol"
+                        ? "Encuentra o publica tu próxima propiedad"
                         : role === "tenant"
                           ? "Completa tu perfil de inquilino"
                           : "Completa tu perfil de propietario"}
                     </h1>
                     <p className="max-w-md text-sm leading-6 text-muted-foreground sm:text-base">
                       {step === 1
-                        ? "Selecciona cómo usarás BR Internacional y crea tu acceso con una experiencia guiada y clara."
+                        ? "Crea tu cuenta como inquilino o propietario y accede a unidades, edificios y solicitudes de alquiler en un solo lugar."
                         : roleDetails.summary}
                     </p>
                   </div>
@@ -260,20 +260,24 @@ function Page() {
               <div className="grid gap-3 sm:grid-cols-2">
                 {[
                   {
-                    title: "Onboarding guiado",
-                    description: "Todo se adapta a tu rol para evitar campos innecesarios.",
+                    title: "Publica en minutos",
+                    description:
+                      "Sube tu propiedad con fotos, amenidades y datos del edificio, todo en un solo formulario.",
                   },
                   {
-                    title: "Listo para móvil",
-                    description: "El layout se reorganiza automáticamente en pantallas pequeñas.",
+                    title: "Solicita desde cualquier lugar",
+                    description:
+                      "Envía solicitudes de alquiler y reservas de amenidades desde el celular o la computadora.",
                   },
                   {
-                    title: "Perfil estructurado",
-                    description: "Separamos credenciales y datos de perfil para escalar mejor.",
+                    title: "Perfiles verificados",
+                    description:
+                      "Inquilinos y propietarios completan su perfil con documentos y referencias para generar confianza.",
                   },
                   {
-                    title: "Fotos seguras",
-                    description: "Las imágenes se suben al bucket existente con tu sesión activa.",
+                    title: "Galería de propiedades",
+                    description:
+                      "Sube fotos de tus unidades y edificios para que los inquilinos vean exactamente lo que están alquilando.",
                   },
                 ].map((item) => (
                   <div key={item.title} className="rounded-2xl border border-border/70 bg-background/70 p-4 shadow-sm">
@@ -288,7 +292,11 @@ function Page() {
 
               <div className="rounded-2xl border border-dashed border-border/80 bg-secondary/35 p-4 text-sm text-muted-foreground">
                 <p className="font-medium text-foreground">{roleDetails.tagline}</p>
-                <p className="mt-1">Tu foto es opcional, pero útil para dar confianza desde el primer contacto.</p>
+                <p className="mt-1">
+                  {role === "tenant"
+                    ? "Busca, compara y solicita unidades disponibles con toda la información que necesitas antes de decidir."
+                    : "Administra tus propiedades, revisa solicitudes y controla pagos desde un solo panel."}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -615,7 +623,6 @@ function Page() {
 
                       {createdUser ? (
                         <div className="space-y-2 sm:col-span-2">
-                          <Label>Orden patronal / Constancia de trabajo (opcional)</Label>
                           <ImageUploader
                             folder={"profiles/" + createdUser.id + "/employer"}
                             label="Orden patronal / Constancia de trabajo (opcional)"
